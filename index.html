@@ -66,18 +66,40 @@
     border-bottom:1px solid var(--line); display:flex;align-items:center;gap:14px;
     padding:10px 18px;
   }
-  .brand{display:flex;align-items:center;gap:10px;font-family:"Space Grotesk";font-weight:700;letter-spacing:-.02em;font-size:17px}
-  .brand .dot{width:11px;height:11px;border-radius:3px;background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);transform:rotate(45deg)}
-  .brand small{font-weight:500;color:var(--faint);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-family:"Inter"}
+  .brand{display:flex;align-items:baseline;gap:9px;font-family:"Space Grotesk";font-weight:700;letter-spacing:-.02em;font-size:18px}
+  .brand .bn{background:linear-gradient(100deg,var(--accent),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--up);box-shadow:0 0 0 3px color-mix(in srgb,var(--up) 22%,transparent);align-self:center;animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .brand small{font-weight:500;color:var(--faint);font-size:11px;font-family:"Inter"}
   .topbar .spacer{flex:1}
-  .ctrl{display:flex;align-items:center;gap:6px}
+  .hclock{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.01em}
+  .gear{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;border:1px solid var(--line-strong);
+    background:var(--surface);color:var(--muted);cursor:pointer;transition:color .15s,border-color .15s}
+  .gear:hover{color:var(--accent);border-color:var(--accent)}
   .seg{display:flex;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden;background:var(--surface)}
-  .seg button{border:0;background:transparent;color:var(--muted);padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+  .seg button{border:0;background:transparent;color:var(--muted);padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit}
   .seg button.on{background:var(--accent);color:#fff}
-  .theme-pick{display:flex;gap:5px;align-items:center}
-  .swatch{width:20px;height:20px;border-radius:6px;border:1px solid var(--line-strong);cursor:pointer;padding:0}
-  .swatch.on{outline:2px solid var(--accent);outline-offset:1px}
+  .theme-pick{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+  .swatch{width:30px;height:30px;border-radius:8px;border:1px solid var(--line-strong);cursor:pointer;padding:0}
+  .swatch.on{outline:2px solid var(--accent);outline-offset:2px}
   .sw-light{background:#F4F6FA}.sw-soft{background:#EBD9C2}.sw-sepia{background:#E2D6C0}.sw-dark{background:#121823}.sw-contrast{background:repeating-linear-gradient(45deg,#fff,#fff 4px,#000 4px,#000 8px)}
+
+  /* Settings drawer */
+  .settings-bg{position:fixed;inset:0;background:rgba(8,12,20,.4);backdrop-filter:blur(2px);z-index:120;opacity:0;pointer-events:none;transition:opacity .2s}
+  .settings-bg.on{opacity:1;pointer-events:auto}
+  .settings{position:fixed;top:0;right:0;height:100%;width:330px;max-width:88vw;background:var(--surface);border-left:1px solid var(--line);
+    box-shadow:-18px 0 50px rgba(0,0,0,.18);z-index:130;transform:translateX(100%);transition:transform .24s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+  .settings.on{transform:translateX(0)}
+  .set-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line);
+    font-family:"Space Grotesk";font-weight:600;font-size:16px}
+  .set-hd .x{border:0;background:var(--surface-2);width:30px;height:30px;border-radius:8px;cursor:pointer;color:var(--muted);font-size:15px}
+  .set-bd{padding:8px 18px 20px;overflow-y:auto}
+  .set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .set-row.col{flex-direction:column;align-items:flex-start;gap:10px}
+  .set-row label{font-size:13px;font-weight:600;color:var(--ink)}
+  .set-btn{border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent);border-radius:9px;padding:8px 14px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit}
+  .set-btn:active{transform:scale(.97)}
+  .set-note{font-size:11px;color:var(--faint);margin:12px 0 0;line-height:1.5}
 
   /* Layout */
   .shell{display:grid;grid-template-columns:232px 1fr;gap:0;align-items:start}
@@ -106,7 +128,8 @@
   section.block{margin-bottom:16px}
   .block-head{display:flex;align-items:center;gap:10px;margin:2px 2px 10px}
   .block-head h2{font-family:"Space Grotesk";font-size:15px;font-weight:600;margin:0;letter-spacing:-.01em}
-  .block-head .eyebrow{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  .block-head .eyebrow{font-size:10px;letter-spacing:.08em;color:var(--accent);font-weight:700;background:var(--accent-soft);padding:3px 8px;border-radius:6px}
+  .block-head .eyebrow.dotmark{padding:0;background:none;width:7px;height:17px;border-radius:3px;display:inline-block;background:linear-gradient(var(--accent),var(--violet))}
   .block-head .upd{margin-left:auto;font-size:10.5px;color:var(--faint)}
   .block-head .upd b{color:var(--muted);font-weight:600}
 
@@ -220,6 +243,7 @@
   .onepoint{margin-top:5px;font-size:11.5px;line-height:1.45;color:var(--ink);background:color-mix(in srgb,var(--up) 12%,transparent);
     border-left:3px solid var(--up);border-radius:0 7px 7px 0;padding:5px 9px}
   .onepoint b{color:var(--up);font-weight:700;margin-right:5px}
+  .trline{margin-top:3px;font-size:12px;color:var(--accent);font-weight:500;line-height:1.4}
 
   /* SecOps grid */
   .secgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
@@ -242,6 +266,7 @@
 
   /* Stream */
   .streamwrap{display:grid;grid-template-columns:1fr 200px;gap:0}
+  .live-badge{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.06em;color:#fff;background:var(--down);padding:3px 8px;border-radius:5px}
   .ytbox{position:relative;aspect-ratio:16/9;background:#000}
   .ytbox iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
   .chlist{border-left:1px solid var(--line);padding:10px;display:flex;flex-direction:column;gap:6px;background:var(--surface-2);overflow-y:auto;max-height:360px}
@@ -295,22 +320,42 @@
 <body>
 
 <header class="topbar">
-  <div class="brand"><span class="dot"></span> Sentinel <small data-i18n="tagline">日英・市況とテックの監視盤</small></div>
+  <div class="brand"><span class="dot"></span><span class="bn">Sentinel</span><small data-i18n="tagline">日英・市況とテックの監視盤</small></div>
   <div class="spacer"></div>
-  <div class="ctrl">
-    <div class="seg" id="langSeg" role="group" aria-label="language">
-      <button data-lang="ja" class="on">日本語</button>
-      <button data-lang="en">EN</button>
-    </div>
-  </div>
-  <div class="ctrl theme-pick" id="themePick" role="group" aria-label="theme">
-    <button class="swatch sw-light on" data-theme="light" title="Light"></button>
-    <button class="swatch sw-soft" data-theme="soft" title="Soft"></button>
-    <button class="swatch sw-sepia" data-theme="sepia" title="Sepia"></button>
-    <button class="swatch sw-dark" data-theme="dark" title="Dark"></button>
-    <button class="swatch sw-contrast" data-theme="contrast" title="High contrast"></button>
-  </div>
+  <div class="hclock mono" id="hclock" aria-hidden="true">—</div>
+  <button class="gear" id="gearBtn" aria-label="settings" title="設定 / Settings">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+  </button>
 </header>
+
+<!-- Settings drawer (⑤) -->
+<div class="settings-bg" id="settingsBg"></div>
+<aside class="settings" id="settings" aria-label="settings">
+  <div class="set-hd"><span data-i18n="set_title">設定</span><button class="x" id="setClose" aria-label="close">✕</button></div>
+  <div class="set-bd">
+    <div class="set-row"><label data-i18n="set_lang">言語</label>
+      <div class="seg" id="langSeg">
+        <button data-lang="ja" class="on">日本語</button>
+        <button data-lang="en">EN</button>
+      </div></div>
+    <div class="set-row"><label data-i18n="set_tr">英語記事の和訳</label>
+      <div class="seg" id="trSeg">
+        <button data-tr="1" class="on" data-i18n="on">ON</button>
+        <button data-tr="0" data-i18n="off">OFF</button>
+      </div></div>
+    <div class="set-row col"><label data-i18n="set_theme">テーマ / 配色</label>
+      <div class="theme-pick" id="themePick" role="group">
+        <button class="swatch sw-light on" data-theme="light" title="Light"></button>
+        <button class="swatch sw-soft" data-theme="soft" title="Soft"></button>
+        <button class="swatch sw-sepia" data-theme="sepia" title="Sepia"></button>
+        <button class="swatch sw-dark" data-theme="dark" title="Dark"></button>
+        <button class="swatch sw-contrast" data-theme="contrast" title="High contrast"></button>
+      </div></div>
+    <div class="set-row"><label data-i18n="set_refresh">情報を更新</label>
+      <button class="set-btn" id="refreshBtn" data-i18n="refresh_now">今すぐ取得</button></div>
+    <p class="set-note" id="setMeta"></p>
+  </div>
+</aside>
 
 <div class="shell">
   <nav class="rail">
@@ -333,7 +378,7 @@
     <!-- MARKETS -->
     <section class="block" id="markets">
       <div class="block-head">
-        <span class="eyebrow">01</span>
+        <span class="eyebrow dotmark"></span>
         <h2 data-i18n="h_markets">注目マーケット</h2>
         <span class="upd"><span data-i18n="updated">更新</span> <b id="updMarkets">—</b></span>
       </div>
@@ -380,7 +425,7 @@
     <!-- FILINGS -->
     <section class="block" id="filings">
       <div class="block-head">
-        <span class="eyebrow">02</span>
+        <span class="eyebrow dotmark"></span>
         <h2 data-i18n="h_filings">開示・決算 横断フィード</h2>
         <span class="upd"><span data-i18n="updated">更新</span> <b>2026-06-28 09:42 JST</b></span>
       </div>
@@ -394,7 +439,7 @@
     <!-- HUB -->
     <section class="block" id="hub">
       <div class="block-head">
-        <span class="eyebrow">03</span>
+        <span class="eyebrow dotmark"></span>
         <h2 data-i18n="h_hub">テック / AI / セキュリティ</h2>
       </div>
       <div class="tabs" id="hubTabs">
@@ -431,31 +476,39 @@
 
     <!-- CALENDAR -->
     <section class="block" id="calendar">
-      <div class="block-head"><span class="eyebrow">04</span><h2 data-i18n="h_cal">経済カレンダー</h2></div>
+      <div class="block-head"><span class="eyebrow dotmark"></span><h2 data-i18n="h_cal">経済カレンダー</h2></div>
       <div class="card"><div class="bd"><div class="wid-lg" id="econCal"></div></div></div>
     </section>
 
     <!-- NEWS + STREAM -->
     <section class="block" id="stream">
-      <div class="block-head"><span class="eyebrow">05</span><h2 data-i18n="h_stream">ニュース＆ライブ配信</h2></div>
-      <div class="grid col2">
+      <div class="block-head"><span class="eyebrow dotmark"></span><h2 data-i18n="h_stream">ワールドモニター（配信＋世界市況）</h2>
+        <span class="upd" data-i18n="stream_hint">チャンネルを選ぶとライブ再生</span></div>
+      <div class="card">
+        <div class="ch"><span class="t" data-i18n="stream_t">ライブ配信</span>
+          <span class="live-badge" id="liveBadge">● LIVE</span></div>
+        <div class="streamwrap">
+          <div class="ytbox"><iframe id="yt" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen
+            referrerpolicy="origin"
+            src="https://www.youtube.com/embed/live_stream?channel=UCIALMKvObZNtJ6AmdCLP7Lg&autoplay=0"></iframe></div>
+          <div class="chlist" id="chList">
+            <div class="chadd">
+              <input id="ytInput" placeholder="YouTube ID / URL">
+              <button id="ytGo" data-i18n="play">再生</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid col2" style="margin-top:14px">
+        <div class="card">
+          <div class="ch"><span class="t" data-i18n="heat_t">世界株ヒートマップ</span>
+            <a class="src" href="https://www.tradingview.com/" target="_blank" rel="noopener">TradingView ↗</a></div>
+          <div class="bd"><div class="wid-lg" id="heatWid"></div></div>
+        </div>
         <div class="card">
           <div class="ch"><span class="t" data-i18n="news_t">トップニュース</span>
             <a class="src" href="https://www.tradingview.com/" target="_blank" rel="noopener">TradingView ↗</a></div>
           <div class="bd"><div class="wid-lg" id="newsWid"></div></div>
-        </div>
-        <div class="card">
-          <div class="ch"><span class="t" data-i18n="stream_t">配信（チャンネル切替）</span></div>
-          <div class="streamwrap">
-            <div class="ytbox"><iframe id="yt" allow="encrypted-media" allowfullscreen
-              src="https://www.youtube-nocookie.com/embed/?listType=search&list=markets%20news%20live"></iframe></div>
-            <div class="chlist" id="chList">
-              <div class="chadd">
-                <input id="ytInput" placeholder="YouTube ID / URL">
-                <button id="ytGo" data-i18n="play">再生</button>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -495,6 +548,8 @@ const I18N={
    m_mkt:"市況",m_fil:"開示",m_hub:"テック",m_cal:"指標",m_str:"配信",
    h_const:"構成上位30社",const_hint:"社名をクリックで詳細",ai_sum:"AI要約",detail:"詳細",source:"出典",loading:"要約を生成中…",no_ai:"（Claude未接続時はサンプル。サーバ起動で要約が入ります）",
    nav_secops:"セキュリティ情報デスク",m_sec:"防衛",h_secops:"セキュリティ情報デスク",secops_hint:"日本を取り巻く脅威・更新・学術・ダークウェブ動向",loading_feed:"最新情報を取得中…",no_data:"該当情報なし（期間を広げて再取得されます）",
+   set_title:"設定",set_lang:"言語",set_tr:"英語記事の和訳",set_theme:"テーマ / 配色",set_refresh:"情報を更新",refresh_now:"今すぐ取得",on:"ON",off:"OFF",
+   h_stream:"ワールドモニター（配信＋世界市況）",stream_hint:"チャンネルを選ぶとライブ再生",stream_t:"ライブ配信",heat_t:"世界株ヒートマップ",
    secops_note:"出典: GDELT（報道）/ NVD(CVE) / CISA KEV。防御・注意喚起・対策の客観共有に限定（攻撃手法の詳細は扱いません）。「ダークウェブ」は公開報道に基づく概況です。",
    filings_note:"本番では SEC EDGAR / EDINET を取得し、Claude API（低トークン）で日英要約・数値差分を生成。数値は XBRL から照合。上記はUIサンプル。",
    tech_note:"本番では公式RSS / ニュースAPI を集約し、Claude で日英要約。各記事に出典URLを併記。",
@@ -512,6 +567,8 @@ const I18N={
    m_mkt:"Markets",m_fil:"Filings",m_hub:"Tech",m_cal:"Calendar",m_str:"Live",
    h_const:"Top 30 constituents",const_hint:"Click a name for details",ai_sum:"AI summary",detail:"Details",source:"Source",loading:"Generating summary…",no_ai:"(Sample when Claude is offline; run the server to enable summaries.)",
    nav_secops:"Security desk",m_sec:"SecOps",h_secops:"Security intelligence desk",secops_hint:"Threats to Japan · updates · academia · dark-web trends",loading_feed:"Loading latest…",no_data:"No items (will retry with a wider window)",
+   set_title:"Settings",set_lang:"Language",set_tr:"Translate EN → JP",set_theme:"Theme / colors",set_refresh:"Data",refresh_now:"Refresh now",on:"ON",off:"OFF",
+   h_stream:"World monitor (live + markets)",stream_hint:"Pick a channel to go live",stream_t:"Live broadcast",heat_t:"Global stock heatmap",
    secops_note:"Sources: GDELT (media) / NVD (CVE) / CISA KEV. Limited to objective defense/advisory/mitigation info (no attack how-to). 'Dark web' is a media-reported overview.",
    filings_note:"In production: pull SEC EDGAR / EDINET and generate JP/EN summaries and numeric deltas with the Claude API (low-token). Figures reconciled from XBRL. Rows above are UI samples.",
    tech_note:"In production: aggregate official RSS / news APIs and summarize JP/EN with Claude. Source URL shown per item.",
@@ -745,13 +802,20 @@ function renderFeed(target,arr){
     const [t,s]=rowParts(r);
     const div=document.createElement("div"); div.className="row";
     div.innerHTML=`<span class="tag ${r.tag||"ai"}">${tagLabel(r.tag||"ai")}</span>
-      <div class="body"><div class="ttl">${t}</div>${s?`<div class="sum">${s}</div>`:""}
+      <div class="body"><div class="ttl">${t}</div>
+      <div class="trline" style="display:none"></div>
+      ${s?`<div class="sum">${s}</div>`:""}
       ${r.tip?`<div class="onepoint"><b>${LANG==="ja"?"対策":"Fix"}</b> ${r.tip}</div>`:""}
       <div class="meta">${(r.ja||r.en)?`<span class="aibadge">AI ${LANG==="ja"?"要約":"summary"}</span>`:""}
       <span class="time">⏱ ${r.time||"—"}</span>
       <a class="lnk" href="${r.url||"#"}" target="_blank" rel="noopener">${r.src||""} ↗</a></div></div>`;
     div.onclick=(e)=>{ if(e.target.closest("a")||e.target.closest(".term"))return; openDetail(r); };
     el.appendChild(div);
+    // ④ JP translation under English titles (only in 日本語 mode, best-effort)
+    if(LANG==="ja" && CONFIG.AUTO_TRANSLATE && t && !hasJP(t)){
+      const line=div.querySelector(".trline");
+      jaTranslate(t).then(tr=>{ if(tr){ line.textContent="和訳: "+tr; line.style.display="block"; } });
+    }
   });
   bindTerms();
 }
@@ -809,13 +873,16 @@ function posTip(e){let x=e.clientX+14,y=e.clientY+16;
   tip.style.left=x+"px"; tip.style.top=y+"px";}
 function hideTip(){tip.style.opacity="0";setTimeout(()=>tip.style.display="none",140);}
 
-/* ---------- Stream ---------- */
+/* ---------- Stream: 24/7 live news channels (channel live_stream embeds) ---------- */
 const CHANNELS=[
- {cn:"Markets News",cc:"検索: market news live",q:"market news live"},
- {cn:"Tech News",cc:"検索: tech news",q:"technology news live"},
- {cn:"World / Economy",cc:"検索: world economy news",q:"world economy news live"},
- {cn:"AI Updates",cc:"検索: AI news",q:"artificial intelligence news"}
+ {cn:"Bloomberg TV",   cc:"経済・市況 24h", ch:"UCIALMKvObZNtJ6AmdCLP7Lg"},
+ {cn:"DW News",        cc:"国際ニュース 24h", ch:"UCknLrEdhRCp1aegoMqRaCZg"},
+ {cn:"Al Jazeera",     cc:"国際・速報 24h", ch:"UCNye-wNBqNL5ZzHSJj3l8Bg"},
+ {cn:"Sky News",       cc:"英・速報 24h", ch:"UCoMdktPbSTixAyNGwb-UYkQ"},
+ {cn:"Yahoo Finance",  cc:"米株・市況", ch:"UCEAZeUIeJs0IjQiqTCdVSIg"},
+ {cn:"ABC News",       cc:"米ニュース", ch:"UCBi2mrWuNuyYy4gbM6fU18Q"}
 ];
+function playChannel(ch){ document.getElementById("yt").src="https://www.youtube.com/embed/live_stream?channel="+ch+"&autoplay=1&mute=1"; }
 function renderChannels(){
   const el=document.getElementById("chList");
   el.querySelectorAll(".ch-item").forEach(n=>n.remove());
@@ -823,16 +890,18 @@ function renderChannels(){
   CHANNELS.forEach((c,i)=>{
     const b=document.createElement("button"); b.className="ch-item"+(i===0?" on":"");
     b.innerHTML=`<span class="cn">${c.cn}</span><span class="cc">${c.cc}</span>`;
-    b.onclick=()=>{ el.querySelectorAll(".ch-item").forEach(x=>x.classList.remove("on")); b.classList.add("on");
-      document.getElementById("yt").src="https://www.youtube-nocookie.com/embed/?listType=search&list="+encodeURIComponent(c.q); };
+    b.onclick=()=>{ el.querySelectorAll(".ch-item").forEach(x=>x.classList.remove("on")); b.classList.add("on"); playChannel(c.ch); };
     el.insertBefore(b,add);
   });
 }
 document.getElementById("ytGo").onclick=()=>{
   let v=document.getElementById("ytInput").value.trim(); if(!v)return;
-  const m=v.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{6,})/); const id=m?m[1]:v;
-  document.getElementById("yt").src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id);
+  const m=v.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([A-Za-z0-9_-]{6,})/); const id=m?m[1]:v;
+  document.getElementById("yt").src="https://www.youtube.com/embed/"+encodeURIComponent(id)+"?autoplay=1";
 };
+function buildHeat(){ tvWidget("heatWid","embed-widget-stock-heatmap.js",{
+  dataSource:"SPX500", exchanges:[], blockSize:"market_cap_basic", blockColor:"change",
+  locale:tvLocale(), colorTheme:tvTheme(), hasTopBar:true, isDataSetEnabled:true, isZoomEnabled:true, width:"100%", height:"100%" }); }
 
 /* ---------- Hub tabs ---------- */
 document.getElementById("hubTabs").addEventListener("click",e=>{
@@ -857,16 +926,33 @@ function setLang(l){ LANG=l;
   renderFeed("paperFeed",(STORE.papers&&STORE.papers.length)?STORE.papers:FEED_PAPER);
   renderFeed("secFeed",flatSec().length?flatSec():FEED_SEC);
   renderSecOps();
-  buildTicker(); buildChart(); buildOverview(); buildHotlists(); buildCal(); buildNews(); buildFX();
+  buildTicker(); buildChart(); buildOverview(); buildHotlists(); buildCal(); buildNews(); buildFX(); buildHeat();
   try{localStorage.setItem("sent_lang",l);}catch(e){}
 }
 function setTheme(t){ THEME=t; document.documentElement.dataset.theme=t;
   document.querySelectorAll("#themePick .swatch").forEach(b=>b.classList.toggle("on",b.dataset.theme===t));
-  buildTicker(); buildChart(); buildOverview(); buildHotlists(); buildCal(); buildNews(); buildFX();
+  buildTicker(); buildChart(); buildOverview(); buildHotlists(); buildCal(); buildNews(); buildFX(); buildHeat();
   try{localStorage.setItem("sent_theme",t);}catch(e){}
 }
 document.getElementById("langSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(b){setLang(b.dataset.lang);}});
 document.getElementById("themePick").addEventListener("click",e=>{const b=e.target.closest(".swatch");if(b)setTheme(b.dataset.theme);});
+
+/* ---------- Settings drawer (⑤) ---------- */
+function openSettings(){document.getElementById("settings").classList.add("on");document.getElementById("settingsBg").classList.add("on");updSetMeta();}
+function closeSettings(){document.getElementById("settings").classList.remove("on");document.getElementById("settingsBg").classList.remove("on");}
+document.getElementById("gearBtn").onclick=openSettings;
+document.getElementById("setClose").onclick=closeSettings;
+document.getElementById("settingsBg").onclick=closeSettings;
+document.getElementById("trSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+  CONFIG.AUTO_TRANSLATE=(b.dataset.tr==="1");
+  document.querySelectorAll("#trSeg button").forEach(x=>x.classList.toggle("on",x===b));
+  try{localStorage.setItem("sent_tr",b.dataset.tr);}catch(e2){}
+  renderAll();});
+document.getElementById("refreshBtn").onclick=()=>{ const el=document.getElementById("refreshBtn");
+  el.textContent=I18N[LANG].loading_feed; loadData(true).then(()=>{el.textContent=I18N[LANG].refresh_now; updSetMeta();}); };
+function updSetMeta(){ const m=document.getElementById("setMeta"); if(!m)return;
+  const t=STORE.ts?new Date(STORE.ts).toLocaleString(LANG==="ja"?"ja-JP":"en-US"):"—";
+  m.textContent=(LANG==="ja"?"最終更新: ":"Last update: ")+t+(LANG==="ja"?" ／ 数字は常時リアルタイム":" / numbers are realtime"); }
 
 /* nav scroll */
 function bindNav(sel){document.querySelectorAll(sel).forEach(a=>a.onclick=()=>{
@@ -882,11 +968,27 @@ bindNav(".rail .navlink"); bindNav(".mobnav button");
    NVD/CISA security — all free, keyless, realtime, zero backend.
    ============================================================ */
 const CONFIG = {
-  API_BASE: "",       // e.g. "https://sentinel.yourname.workers.dev"
-  USE_GDELT: true,    // free keyless realtime news (client-side)
-  USE_NVD_CISA: true  // free security data (client-side)
+  API_BASE: "",         // e.g. "https://sentinel.yourname.workers.dev"
+  USE_GDELT: true,      // free keyless realtime news (client-side)
+  USE_NVD_CISA: true,   // free security data (client-side)
+  AUTO_TRANSLATE: true  // ④ show JP translation of English titles when language = 日本語
 };
 const API_BASE = CONFIG.API_BASE;
+
+/* ---------- ④ best-effort free JP translation (keyless, cached, fail-silent) ---------- */
+const TRC = {}; try{ Object.assign(TRC, JSON.parse(localStorage.getItem("sent_trc")||"{}")); }catch(e){}
+let TRC_dirty=false;
+setInterval(()=>{ if(TRC_dirty){ try{localStorage.setItem("sent_trc",JSON.stringify(TRC));}catch(e){} TRC_dirty=false; } }, 4000);
+const hasJP = (s)=>/[ぁ-んァ-ヶ一-龠]/.test(s||"");
+async function jaTranslate(text){
+  if(!text) return null; if(TRC[text]) return TRC[text];
+  try{
+    const u="https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=ja&dt=t&q="+encodeURIComponent(text.slice(0,400));
+    const r=await fetch(u); if(!r.ok) return null; const j=await r.json();
+    const out=(j&&j[0]||[]).map(x=>x[0]).join(""); if(!out) return null;
+    TRC[text]=out; TRC_dirty=true; return out;
+  }catch(e){ return null; }
+}
 /* STORE = all pre-collected content, grouped. Rendered instantly from cache. */
 let STORE={ts:0,news:{},sec:{},filings:[],papers:[]};
 const CACHE_TTL=12*3600*1000;   // refresh at most ~2x/day
@@ -911,7 +1013,7 @@ async function gdelt(query,tag="ai",max=18){
 }
 /* ---------- NVD + CISA: free security data (client-side) ---------- */
 async function nvdCves(n=15){ if(!CONFIG.USE_NVD_CISA)return null;
-  try{const start=new Date(Date.now()-90*864e5).toISOString().slice(0,23),end=new Date().toISOString().slice(0,23);
+  try{const start=new Date(Date.now()-119*864e5).toISOString().slice(0,23),end=new Date().toISOString().slice(0,23);
     const r=await fetch(`https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=${n}&pubStartDate=${start}&pubEndDate=${end}`);
     if(!r.ok)return null; const j=await r.json();
     return (j.vulnerabilities||[]).map(v=>{const c=v.cve||{};const d=((c.descriptions||[]).find(x=>x.lang==="en")||{}).value||"";
@@ -1018,9 +1120,9 @@ async function buildLive(){
   for(const c of TECH_CATS){ const d=await gdelt(c.q,"ai",14); if(d&&d.length)news[c.id]=d; }
   for(const p of SEC_PANELS){
     let d=null;
-    if(p.type==="gdelt") d=await gdelt(p.q,"sec",12);
-    else if(p.type==="kev") d=await cisaKev(12)||await pull("/api/security");
-    else if(p.type==="nvd") d=await nvdCves(12);
+    if(p.type==="gdelt") d=await gdelt(p.q,"sec",24);
+    else if(p.type==="kev") d=await cisaKev(25)||await pull("/api/security")||await gdelt('("known exploited" OR 悪用 脆弱性 OR CISA)',"sec",18);
+    else if(p.type==="nvd") d=await nvdCves(40)||await gdelt('(CVE OR 脆弱性 OR vulnerability)',"sec",18);
     else if(p.type==="arxiv") d=await pull("/api/papers")||await gdelt('(cybersecurity OR cryptography)',"paper",10);
     if(d&&d.length) sec[p.id]=withTips(d);
   }
@@ -1053,15 +1155,22 @@ async function loadData(force){
 (function init(){
   try{const l=localStorage.getItem("sent_lang"); if(l)LANG=l;}catch(e){}
   try{const t=localStorage.getItem("sent_theme"); if(t)THEME=t;}catch(e){}
+  try{const tr=localStorage.getItem("sent_tr"); if(tr!=null)CONFIG.AUTO_TRANSLATE=(tr==="1");}catch(e){}
   document.documentElement.dataset.theme=THEME;
   document.querySelectorAll("#themePick .swatch").forEach(b=>b.classList.toggle("on",b.dataset.theme===THEME));
   document.querySelectorAll("#langSeg button").forEach(b=>b.classList.toggle("on",b.dataset.lang===LANG));
+  document.querySelectorAll("#trSeg button").forEach(b=>b.classList.toggle("on",(b.dataset.tr==="1")===CONFIG.AUTO_TRANSLATE));
   renderTF(); renderChannels();
   setLang(LANG);
   renderClocks(); setInterval(renderClocks,30000);
+  renderHClock(); setInterval(renderHClock,1000*30);
+  // first chart sometimes needs a nudge after the TradingView script loads
+  setTimeout(buildChart,500); window.addEventListener("load",()=>setTimeout(buildChart,400));
   // info/news/security: pre-collected & cached → instant; refresh at most ~2x/day
   loadData(false); setInterval(()=>loadData(false), 6*3600*1000);
 })();
+function renderHClock(){ const el=document.getElementById("hclock"); if(!el)return;
+  const d=new Date(); el.textContent=d.toLocaleTimeString(LANG==="ja"?"ja-JP":"en-US",{hour:"2-digit",minute:"2-digit"})+" JST".replace("JST", Intl.DateTimeFormat().resolvedOptions().timeZone.split("/").pop()||""); }
 </script>
 </body>
 </html>
