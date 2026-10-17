@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sentinel — Markets &amp; Tech Monitor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F6FA; --surface:#FFFFFF; --surface-2:#FBFCFE;
+    --ink:#0E1623; --muted:#5C6678; --faint:#8A94A6;
+    --line:#E4E8F0; --line-strong:#D2D8E4;
+    --accent:#2F54EB; --accent-soft:#EAF0FE;
+    --violet:#6E45E2; --violet-soft:#EFEAFD;
+    --up:#0E9F6E; --down:#E02D3C;
+    --warn:#C2410C;
+    --radius:14px; --radius-sm:9px;
+    --shadow:0 1px 2px rgba(16,24,40,.04), 0 6px 20px rgba(16,24,40,.06);
+    --tv-theme:light;
+  }
+  [data-theme="soft"]{
+    --bg:#F3EFE7; --surface:#FFFDF8; --surface-2:#FBF7EF;
+    --ink:#221C12; --muted:#6B5F4C; --faint:#9A8C73;
+    --line:#E8E0D2; --line-strong:#D8CDB8; --accent:#B4622B; --accent-soft:#F6E9DD;
+    --violet:#8A5A2B; --violet-soft:#F1E6D8; --shadow:0 1px 2px rgba(60,40,20,.05),0 6px 20px rgba(60,40,20,.07);
+  }
+  [data-theme="sepia"]{
+    --bg:#EFE7DA; --surface:#FAF4E9; --surface-2:#F4ECDD;
+    --ink:#2B2415; --muted:#6E6045; --faint:#998A68;
+    --line:#E2D6C0; --line-strong:#D2C2A4; --accent:#7C6A3C; --accent-soft:#EFE4CC;
+    --violet:#6B5A8A; --violet-soft:#E7E0EE;
+  }
+  [data-theme="dark"]{
+    --bg:#0B0F16; --surface:#121823; --surface-2:#0E1420;
+    --ink:#E8EDF5; --muted:#9AA6B8; --faint:#697488;
+    --line:#212a39; --line-strong:#303a4d; --accent:#5B7CFF; --accent-soft:#1A2236;
+    --violet:#9B7BFF; --violet-soft:#1E1B33; --up:#2DD4A0; --down:#FF6571;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.4); --tv-theme:dark;
+  }
+  [data-theme="contrast"]{
+    --bg:#FFFFFF; --surface:#FFFFFF; --surface-2:#FFFFFF;
+    --ink:#000000; --muted:#1A1A1A; --faint:#333333;
+    --line:#000000; --line-strong:#000000; --accent:#0033CC; --accent-soft:#E6ECFF;
+    --violet:#5500AA; --violet-soft:#EFE6FA; --up:#006B3C; --down:#C8001E;
+    --shadow:none;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"Inter",system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+    font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased;
+    transition:background .3s ease,color .3s ease;
+  }
+  [data-theme="contrast"] *{border-color:#000 !important}
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+  .disp{font-family:"Space Grotesk",sans-serif}
+  a{color:inherit}
+
+  /* Top bar */
+  header.topbar{
+    position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--surface) 88%,transparent);
+    backdrop-filter:saturate(160%) blur(10px);
+    border-bottom:1px solid var(--line); display:flex;align-items:center;gap:14px;
+    padding:10px 18px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-family:"Space Grotesk";font-weight:700;letter-spacing:-.02em;font-size:17px}
+  .brand .dot{width:11px;height:11px;border-radius:3px;background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);transform:rotate(45deg)}
+  .brand small{font-weight:500;color:var(--faint);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-family:"Inter"}
+  .topbar .spacer{flex:1}
+  .ctrl{display:flex;align-items:center;gap:6px}
+  .seg{display:flex;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden;background:var(--surface)}
+  .seg button{border:0;background:transparent;color:var(--muted);padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+  .seg button.on{background:var(--accent);color:#fff}
+  .theme-pick{display:flex;gap:5px;align-items:center}
+  .swatch{width:20px;height:20px;border-radius:6px;border:1px solid var(--line-strong);cursor:pointer;padding:0}
+  .swatch.on{outline:2px solid var(--accent);outline-offset:1px}
+  .sw-light{background:#F4F6FA}.sw-soft{background:#EBD9C2}.sw-sepia{background:#E2D6C0}.sw-dark{background:#121823}.sw-contrast{background:repeating-linear-gradient(45deg,#fff,#fff 4px,#000 4px,#000 8px)}
+
+  /* Layout */
+  .shell{display:grid;grid-template-columns:232px 1fr;gap:0;align-items:start}
+  nav.rail{position:sticky;top:57px;height:calc(100vh - 57px);border-right:1px solid var(--line);
+    padding:14px 12px;overflow-y:auto;background:var(--surface-2)}
+  .rail h4{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:16px 8px 7px;font-weight:600}
+  .rail h4:first-child{margin-top:2px}
+  .navlink{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--radius-sm);color:var(--muted);
+    text-decoration:none;font-weight:500;cursor:pointer;font-size:13px}
+  .navlink:hover{background:var(--accent-soft);color:var(--ink)}
+  .navlink.on{background:var(--accent);color:#fff}
+  .navlink .ic{width:8px;height:8px;border-radius:2px;background:currentColor;opacity:.7}
+
+  /* Market clock rail */
+  .clocks{margin-top:6px;display:flex;flex-direction:column;gap:6px}
+  .clock{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface)}
+  .clock .nm{font-weight:600;font-size:12px}
+  .clock .st{font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px}
+  .st.open{background:color-mix(in srgb,var(--up) 16%,transparent);color:var(--up)}
+  .st.closed{background:color-mix(in srgb,var(--faint) 18%,transparent);color:var(--faint)}
+  .clock .tm{font-size:10px;color:var(--faint)}
+
+  main{padding:16px 18px 60px;min-width:0}
+  .tickerwrap{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;background:var(--surface)}
+
+  section.block{margin-bottom:16px}
+  .block-head{display:flex;align-items:center;gap:10px;margin:2px 2px 10px}
+  .block-head h2{font-family:"Space Grotesk";font-size:15px;font-weight:600;margin:0;letter-spacing:-.01em}
+  .block-head .eyebrow{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  .block-head .upd{margin-left:auto;font-size:10.5px;color:var(--faint)}
+  .block-head .upd b{color:var(--muted);font-weight:600}
+
+  .grid{display:grid;gap:14px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .card .ch{display:flex;align-items:center;gap:8px;padding:11px 13px;border-bottom:1px solid var(--line)}
+  .card .ch .t{font-weight:600;font-size:13px}
+  .card .ch .src{margin-left:auto;font-size:10.5px;color:var(--faint);text-decoration:none}
+  .card .ch .src:hover{color:var(--accent)}
+  .card .bd{padding:0}
+
+  /* Markets row */
+  .marketsbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .mkt{flex:1;min-width:140px;border:1px solid var(--line);background:var(--surface);border-radius:var(--radius-sm);
+    padding:10px 12px;cursor:pointer;text-align:left;transition:border-color .15s,transform .1s;font-family:inherit;color:inherit}
+  .mkt:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .mkt.on{border-color:var(--accent);background:var(--accent-soft)}
+  .mkt .nm{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.02em}
+  .mkt .px{font-size:17px;font-weight:600;margin-top:3px}
+  .mkt .ch2{font-size:11.5px;font-weight:600}
+  .mkt .ch2.up{color:var(--up)} .mkt .ch2.down{color:var(--down)}
+
+  .tfbar{display:flex;gap:4px;flex-wrap:wrap;padding:9px 11px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+  .tf{border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);border-radius:7px;
+    padding:5px 10px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit}
+  .tf.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .chartbox{height:430px}
+  @media(max-width:640px){.chartbox{height:330px}}
+
+  .col2{grid-template-columns:1fr 1fr}
+  .fxrow{grid-template-columns:repeat(4,1fr)}
+  .wid-sm{height:130px}.wid-md{height:300px}.wid-lg{height:420px}
+
+  /* Hub tabs */
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .tab{border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);border-radius:999px;
+    padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px}
+  .tab.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+  .tab.tech.on{background:var(--violet);border-color:var(--violet);color:#fff}
+  .panel{display:none}.panel.on{display:block}
+
+  .feed{display:flex;flex-direction:column}
+  .row{display:flex;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);align-items:flex-start}
+  .row:last-child{border-bottom:0}
+  .row .tag{flex-shrink:0;font-size:10px;font-weight:700;letter-spacing:.04em;padding:3px 8px;border-radius:6px;margin-top:2px}
+  .tag.earn{background:var(--accent-soft);color:var(--accent)}
+  .tag.rev{background:color-mix(in srgb,var(--warn) 15%,transparent);color:var(--warn)}
+  .tag.sec{background:color-mix(in srgb,var(--down) 14%,transparent);color:var(--down)}
+  .tag.ai{background:var(--violet-soft);color:var(--violet)}
+  .tag.paper{background:color-mix(in srgb,var(--up) 14%,transparent);color:var(--up)}
+  .row .body{min-width:0;flex:1}
+  .row .ttl{font-weight:600;font-size:13.5px;line-height:1.35}
+  .row .sum{color:var(--muted);font-size:12.5px;margin-top:3px}
+  .row .meta{display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap}
+  .row .meta .time{font-size:10.5px;color:var(--faint)}
+  .row .meta .lnk{font-size:10.5px;color:var(--accent);text-decoration:none}
+  .row .meta .lnk:hover{text-decoration:underline}
+  .aibadge{font-size:9.5px;font-weight:700;letter-spacing:.05em;color:var(--violet);border:1px solid var(--violet);border-radius:5px;padding:1px 5px}
+
+  .scaffold{padding:13px 14px;font-size:12px;color:var(--faint);background:var(--surface-2);border-top:1px dashed var(--line-strong)}
+  .scaffold code{background:var(--accent-soft);color:var(--accent);padding:1px 6px;border-radius:5px;font-family:"JetBrains Mono"}
+
+  /* Glossary tooltip */
+  .term{border-bottom:1.5px dotted var(--accent);cursor:help;position:relative}
+  .tip{position:fixed;z-index:200;max-width:280px;background:var(--ink);color:var(--surface);
+    padding:9px 12px;border-radius:9px;font-size:12px;line-height:1.45;box-shadow:0 10px 30px rgba(0,0,0,.25);
+    pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .12s;display:none}
+  .tip .tw{font-weight:700;display:block;margin-bottom:2px;font-size:12px}
+
+  /* Constituents */
+  .const-card .bd{padding:12px 13px}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{display:flex;flex-direction:column;border:1px solid var(--line);background:var(--surface);border-radius:9px;
+    padding:7px 10px;cursor:pointer;font-family:inherit;color:inherit;min-width:104px;text-align:left}
+  .chip:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .chip .cs{font-weight:700;font-size:12px;font-family:"JetBrains Mono"}
+  .chip .cnm{font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
+  .chip .rk{font-size:9px;color:var(--faint);font-weight:600}
+
+  /* Modal */
+  .modal{position:fixed;inset:0;z-index:300;display:none;align-items:flex-start;justify-content:center;
+    background:rgba(8,12,20,.45);backdrop-filter:blur(2px);padding:40px 16px;overflow-y:auto}
+  .modal.on{display:flex}
+  .sheet{background:var(--surface);border:1px solid var(--line);border-radius:16px;max-width:880px;width:100%;
+    box-shadow:0 30px 80px rgba(0,0,0,.35);overflow:hidden;animation:rise .18s ease}
+  @keyframes rise{from{transform:translateY(10px);opacity:.6}to{transform:translateY(0);opacity:1}}
+  .sheet .sh{display:flex;align-items:flex-start;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+  .sheet .sh .x{margin-left:auto;border:0;background:var(--surface-2);width:30px;height:30px;border-radius:8px;
+    cursor:pointer;font-size:16px;color:var(--muted);flex-shrink:0}
+  .sheet .sh h3{margin:0;font-family:"Space Grotesk";font-size:17px;line-height:1.3}
+  .sheet .sh .mt{font-size:11px;color:var(--faint);margin-top:5px;display:flex;gap:12px;flex-wrap:wrap}
+  .sheet .sh .mt a{color:var(--accent);text-decoration:none}
+  .sheet .sb{padding:16px 18px}
+  .sheet .sb p{margin:0 0 12px;font-size:14px;line-height:1.6}
+  .aibox{border:1px solid var(--violet);background:var(--violet-soft);border-radius:11px;padding:12px 14px;margin-bottom:12px}
+  .aibox .lab{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--violet);text-transform:uppercase}
+  .aibox .txt{font-size:13.5px;margin-top:5px;line-height:1.55}
+  .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+  .mgrid .w{border:1px solid var(--line);border-radius:11px;overflow:hidden;height:240px}
+  .mgrid .w.full{grid-column:1/-1;height:340px}
+  @media(max-width:640px){.mgrid{grid-template-columns:1fr}.modal{padding:14px 8px}}
+  .row{cursor:pointer}
+  .row:hover{background:var(--accent-soft)}
+
+  /* Sub-category chips (tech) */
+  .subchips{display:flex;flex-wrap:wrap;gap:6px;padding:11px 13px;border-bottom:1px solid var(--line);background:var(--surface-2);overflow-x:auto}
+  .subchip{border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);border-radius:999px;
+    padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+  .subchip.on{background:var(--violet);color:#fff;border-color:var(--violet)}
+  .loadingrow{padding:16px 14px;color:var(--faint);font-size:12.5px}
+  .onepoint{margin-top:5px;font-size:11.5px;line-height:1.45;color:var(--ink);background:color-mix(in srgb,var(--up) 12%,transparent);
+    border-left:3px solid var(--up);border-radius:0 7px 7px 0;padding:5px 9px}
+  .onepoint b{color:var(--up);font-weight:700;margin-right:5px}
+
+  /* SecOps grid */
+  .secgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .secpanel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;min-height:260px}
+  .secpanel .sc{display:flex;align-items:center;gap:8px;padding:11px 13px;border-bottom:1px solid var(--line)}
+  .secpanel .sc .ico{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+  .secpanel .sc .st{font-weight:700;font-size:12.5px}
+  .secpanel .sc .cnt{margin-left:auto;font-size:10px;color:var(--faint);font-weight:600}
+  .secpanel .sf{overflow-y:auto;max-height:300px}
+  .secpanel .sf .row{padding:9px 13px}
+  .secpanel .sf .ttl{font-size:12px}
+  @media(max-width:1100px){.secgrid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:700px){.secgrid{grid-template-columns:1fr}}
+
+  /* Company modal timeframe bar */
+  .mtf{display:flex;gap:4px;flex-wrap:wrap;margin:0 0 10px}
+  .mtf button{border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);border-radius:7px;
+    padding:5px 11px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit}
+  .mtf button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+  /* Stream */
+  .streamwrap{display:grid;grid-template-columns:1fr 200px;gap:0}
+  .ytbox{position:relative;aspect-ratio:16/9;background:#000}
+  .ytbox iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .chlist{border-left:1px solid var(--line);padding:10px;display:flex;flex-direction:column;gap:6px;background:var(--surface-2);overflow-y:auto;max-height:360px}
+  .ch-item{display:flex;flex-direction:column;gap:1px;text-align:left;border:1px solid var(--line);background:var(--surface);
+    border-radius:8px;padding:8px 10px;cursor:pointer;font-family:inherit;color:inherit}
+  .ch-item:hover{border-color:var(--accent)}
+  .ch-item.on{border-color:var(--accent);background:var(--accent-soft)}
+  .ch-item .cn{font-weight:600;font-size:12px}
+  .ch-item .cc{font-size:10px;color:var(--faint)}
+  .chadd{display:flex;gap:6px;margin-top:4px}
+  .chadd input{flex:1;min-width:0;border:1px solid var(--line-strong);border-radius:7px;padding:6px 8px;font-size:11px;background:var(--surface);color:var(--ink);font-family:inherit}
+  .chadd button{border:0;background:var(--accent);color:#fff;border-radius:7px;padding:6px 10px;font-size:11px;font-weight:600;cursor:pointer}
+
+  footer.disc{margin-top:24px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--radius);
+    background:var(--surface-2);color:var(--muted);font-size:11.5px;line-height:1.6}
+  footer.disc b{color:var(--ink)}
+
+  .mobnav{display:none}
+  @media(max-width:920px){
+    .shell{grid-template-columns:1fr}
+    nav.rail{display:none}
+    .col2,.fxrow{grid-template-columns:1fr}
+    .streamwrap{grid-template-columns:1fr}
+    .chlist{flex-direction:row;border-left:0;border-top:1px solid var(--line);max-height:none;flex-wrap:wrap}
+    .ch-item{flex:1;min-width:120px}
+    .mobnav{display:flex;position:sticky;bottom:0;z-index:40;background:var(--surface);border-top:1px solid var(--line);
+      padding:7px;gap:6px;justify-content:space-around}
+    .mobnav button{flex:1;border:0;background:transparent;color:var(--muted);font-size:10.5px;font-weight:600;
+      padding:6px 2px;border-radius:8px;cursor:pointer;font-family:inherit}
+    .mobnav button.on{background:var(--accent-soft);color:var(--accent)}
+    main{padding:12px 12px 72px}
+    .marketsbar{gap:7px}.mkt{min-width:calc(50% - 4px)}
+    .block-head .upd{display:none}
+    .mgrid{grid-template-columns:1fr}
+  }
+  @media(max-width:560px){
+    header.topbar{flex-wrap:wrap;gap:8px;padding:8px 12px}
+    .brand small{display:none}
+    .theme-pick{order:3}
+    .mkt{min-width:100%}
+    .tf,.subchip{padding:6px 10px}  /* easier tap targets */
+    .mobnav button{font-size:10px}
+    .chartbox{height:280px}
+    .sheet .sh h3{font-size:15px}
+  }
+  @media(max-width:920px){.mobnav{overflow-x:auto}}
+  @media(prefers-reduced-motion:reduce){*{transition:none !important}}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand"><span class="dot"></span> Sentinel <small data-i18n="tagline">日英・市況とテックの監視盤</small></div>
+  <div class="spacer"></div>
+  <div class="ctrl">
+    <div class="seg" id="langSeg" role="group" aria-label="language">
+      <button data-lang="ja" class="on">日本語</button>
+      <button data-lang="en">EN</button>
+    </div>
+  </div>
+  <div class="ctrl theme-pick" id="themePick" role="group" aria-label="theme">
+    <button class="swatch sw-light on" data-theme="light" title="Light"></button>
+    <button class="swatch sw-soft" data-theme="soft" title="Soft"></button>
+    <button class="swatch sw-sepia" data-theme="sepia" title="Sepia"></button>
+    <button class="swatch sw-dark" data-theme="dark" title="Dark"></button>
+    <button class="swatch sw-contrast" data-theme="contrast" title="High contrast"></button>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="rail">
+    <h4 data-i18n="nav_sec">セクション</h4>
+    <a class="navlink on" data-scroll="markets"><span class="ic"></span><span data-i18n="nav_markets">マーケット</span></a>
+    <a class="navlink" data-scroll="filings"><span class="ic"></span><span data-i18n="nav_filings">開示・決算</span></a>
+    <a class="navlink" data-scroll="hub"><span class="ic"></span><span data-i18n="nav_hub">テック / AI / セキュリティ</span></a>
+    <a class="navlink" data-scroll="secops"><span class="ic"></span><span data-i18n="nav_secops">セキュリティ情報デスク</span></a>
+    <a class="navlink" data-scroll="calendar"><span class="ic"></span><span data-i18n="nav_cal">経済カレンダー</span></a>
+    <a class="navlink" data-scroll="stream"><span class="ic"></span><span data-i18n="nav_stream">ライブ配信</span></a>
+
+    <h4 data-i18n="nav_clock">世界の市場時間</h4>
+    <div class="clocks" id="clocks"></div>
+  </nav>
+
+  <main>
+    <!-- Ticker tape -->
+    <div class="tickerwrap" id="tickerTape"></div>
+
+    <!-- MARKETS -->
+    <section class="block" id="markets">
+      <div class="block-head">
+        <span class="eyebrow">01</span>
+        <h2 data-i18n="h_markets">注目マーケット</h2>
+        <span class="upd"><span data-i18n="updated">更新</span> <b id="updMarkets">—</b></span>
+      </div>
+
+      <div class="marketsbar" id="marketsBar"></div>
+
+      <div class="grid col2">
+        <div class="card">
+          <div class="ch">
+            <span class="t" id="chartTitle">日経平均 (NI225)</span>
+            <a class="src" href="https://www.tradingview.com/" target="_blank" rel="noopener">TradingView ↗</a>
+          </div>
+          <div class="tfbar" id="tfbar"></div>
+          <div class="bd"><div class="chartbox" id="advChart"></div></div>
+        </div>
+        <div class="card">
+          <div class="ch"><span class="t" data-i18n="overview">世界市況オーバービュー</span>
+            <a class="src" href="https://www.tradingview.com/" target="_blank" rel="noopener">TradingView ↗</a></div>
+          <div class="bd"><div class="wid-lg" id="overview"></div></div>
+        </div>
+      </div>
+
+      <div class="block-head" style="margin-top:16px">
+        <span class="eyebrow">FX</span>
+        <h2 data-i18n="h_fx">為替（円中心）</h2>
+        <span class="upd" data-i18n="fx_hint">クリックで上のチャートに表示</span>
+      </div>
+      <div class="grid fxrow" id="fxRow"></div>
+
+      <div class="block-head" style="margin-top:16px">
+        <span class="eyebrow">↑↓</span>
+        <h2 data-i18n="h_movers">値動き上位（選択市場）</h2>
+      </div>
+      <div class="card"><div class="bd"><div class="wid-lg" id="hotlists"></div></div></div>
+
+      <div class="block-head" style="margin-top:16px">
+        <span class="eyebrow">30</span>
+        <h2 id="constTitle" data-i18n="h_const">構成上位30社</h2>
+        <span class="upd" data-i18n="const_hint">社名をクリックで詳細</span>
+      </div>
+      <div class="card const-card"><div class="bd"><div class="chips" id="constChips"></div></div></div>
+    </section>
+
+    <!-- FILINGS -->
+    <section class="block" id="filings">
+      <div class="block-head">
+        <span class="eyebrow">02</span>
+        <h2 data-i18n="h_filings">開示・決算 横断フィード</h2>
+        <span class="upd"><span data-i18n="updated">更新</span> <b>2026-06-28 09:42 JST</b></span>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="t" data-i18n="filings_t">日米 開示（要約付き）</span></div>
+        <div class="feed" id="filingFeed"></div>
+        <div class="scaffold" data-i18n="filings_note">本番では <code>SEC EDGAR</code> / <code>EDINET</code> を取得し、<code>Claude API</code>（低トークン）で日英要約・数値差分を生成。数値は XBRL から照合。上記はUIサンプル。</div>
+      </div>
+    </section>
+
+    <!-- HUB -->
+    <section class="block" id="hub">
+      <div class="block-head">
+        <span class="eyebrow">03</span>
+        <h2 data-i18n="h_hub">テック / AI / セキュリティ</h2>
+      </div>
+      <div class="tabs" id="hubTabs">
+        <button class="tab tech on" data-tab="tech" data-i18n="tab_tech">テック・AI</button>
+        <button class="tab tech" data-tab="people" data-i18n="tab_people">人物・学者</button>
+        <button class="tab tech" data-tab="papers" data-i18n="tab_papers">論文</button>
+        <button class="tab tech" data-tab="security" data-i18n="tab_sec">セキュリティ</button>
+      </div>
+
+      <div class="card">
+        <div class="panel on" data-panel="tech">
+          <div class="subchips" id="techCats"></div>
+          <div class="feed" id="techFeed"></div>
+          <div class="scaffold" data-i18n="tech_note">分野別に経済を動かすニュースを GDELT（無料・キー不要・世界65言語）からリアルタイム取得。各記事に出典ドメインと時刻を併記。</div></div>
+        <div class="panel" data-panel="people"><div class="feed" id="peopleFeed"></div>
+          <div class="scaffold" data-i18n="people_note">実在人物は事実・出典明記に限定（憶測なし）。出典URLを小リンクで表示。</div></div>
+        <div class="panel" data-panel="papers"><div class="feed" id="paperFeed"></div>
+          <div class="scaffold" data-i18n="papers_note">本番では <code>arXiv API</code>（cs.AI / cs.LG / cs.CR）から取得し要約。</div></div>
+        <div class="panel" data-panel="security"><div class="feed" id="secFeed"></div>
+          <div class="scaffold" data-i18n="sec_note">出典: <code>NVD(CVE)</code> / <code>CISA KEV</code> / <code>JPCERT/CC</code>。注意喚起・対策の客観共有に限定。</div></div>
+      </div>
+    </section>
+
+    <!-- SECOPS (IT/Security/AI operations desk) -->
+    <section class="block" id="secops">
+      <div class="block-head">
+        <span class="eyebrow">SOC</span>
+        <h2 data-i18n="h_secops">セキュリティ情報デスク</h2>
+        <span class="upd" data-i18n="secops_hint">日本を取り巻く脅威・更新・学術・ダークウェブ動向</span>
+      </div>
+      <div class="secgrid" id="secGrid"></div>
+      <div class="scaffold" data-i18n="secops_note">出典: GDELT（報道）/ NVD(CVE) / CISA KEV。防御・注意喚起・対策の客観共有に限定（攻撃手法の詳細は扱いません）。「ダークウェブ」は公開報道に基づく概況です。</div>
+    </section>
+
+    <!-- CALENDAR -->
+    <section class="block" id="calendar">
+      <div class="block-head"><span class="eyebrow">04</span><h2 data-i18n="h_cal">経済カレンダー</h2></div>
+      <div class="card"><div class="bd"><div class="wid-lg" id="econCal"></div></div></div>
+    </section>
+
+    <!-- NEWS + STREAM -->
+    <section class="block" id="stream">
+      <div class="block-head"><span class="eyebrow">05</span><h2 data-i18n="h_stream">ニュース＆ライブ配信</h2></div>
+      <div class="grid col2">
+        <div class="card">
+          <div class="ch"><span class="t" data-i18n="news_t">トップニュース</span>
+            <a class="src" href="https://www.tradingview.com/" target="_blank" rel="noopener">TradingView ↗</a></div>
+          <div class="bd"><div class="wid-lg" id="newsWid"></div></div>
+        </div>
+        <div class="card">
+          <div class="ch"><span class="t" data-i18n="stream_t">配信（チャンネル切替）</span></div>
+          <div class="streamwrap">
+            <div class="ytbox"><iframe id="yt" allow="encrypted-media" allowfullscreen
+              src="https://www.youtube-nocookie.com/embed/?listType=search&list=markets%20news%20live"></iframe></div>
+            <div class="chlist" id="chList">
+              <div class="chadd">
+                <input id="ytInput" placeholder="YouTube ID / URL">
+                <button id="ytGo" data-i18n="play">再生</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="disc" id="disc"></footer>
+  </main>
+</div>
+
+<nav class="mobnav" id="mobnav">
+  <button data-scroll="markets" class="on" data-i18n="m_mkt">市況</button>
+  <button data-scroll="filings" data-i18n="m_fil">開示</button>
+  <button data-scroll="hub" data-i18n="m_hub">テック</button>
+  <button data-scroll="secops" data-i18n="m_sec">防衛</button>
+  <button data-scroll="calendar" data-i18n="m_cal">指標</button>
+  <button data-scroll="stream" data-i18n="m_str">配信</button>
+</nav>
+
+<div class="tip" id="tip"></div>
+
+<div class="modal" id="modal"><div class="sheet">
+  <div class="sh"><div style="min-width:0">
+    <h3 id="mTitle">—</h3><div class="mt" id="mMeta"></div></div>
+    <button class="x" id="mClose" aria-label="close">✕</button></div>
+  <div class="sb" id="mBody"></div>
+</div></div>
+
+<script>
+/* ---------- i18n ---------- */
+const I18N={
+ ja:{tagline:"日英・市況とテックの監視盤",nav_sec:"セクション",nav_markets:"マーケット",nav_filings:"開示・決算",
+   nav_hub:"テック / AI / セキュリティ",nav_cal:"経済カレンダー",nav_stream:"ライブ配信",nav_clock:"世界の市場時間",
+   h_markets:"注目マーケット",updated:"更新",overview:"世界市況オーバービュー",h_fx:"為替（円中心）",
+   fx_hint:"クリックで上のチャートに表示",h_movers:"値動き上位（選択市場）",h_filings:"開示・決算 横断フィード",
+   filings_t:"日米 開示（要約付き）",h_hub:"テック / AI / セキュリティ",tab_tech:"テック・AI",tab_people:"人物・学者",
+   tab_papers:"論文",tab_sec:"セキュリティ",h_cal:"経済カレンダー",h_stream:"ニュース＆ライブ配信",
+   news_t:"トップニュース",stream_t:"配信（チャンネル切替）",play:"再生",
+   m_mkt:"市況",m_fil:"開示",m_hub:"テック",m_cal:"指標",m_str:"配信",
+   h_const:"構成上位30社",const_hint:"社名をクリックで詳細",ai_sum:"AI要約",detail:"詳細",source:"出典",loading:"要約を生成中…",no_ai:"（Claude未接続時はサンプル。サーバ起動で要約が入ります）",
+   nav_secops:"セキュリティ情報デスク",m_sec:"防衛",h_secops:"セキュリティ情報デスク",secops_hint:"日本を取り巻く脅威・更新・学術・ダークウェブ動向",loading_feed:"最新情報を取得中…",no_data:"該当情報なし（期間を広げて再取得されます）",
+   secops_note:"出典: GDELT（報道）/ NVD(CVE) / CISA KEV。防御・注意喚起・対策の客観共有に限定（攻撃手法の詳細は扱いません）。「ダークウェブ」は公開報道に基づく概況です。",
+   filings_note:"本番では SEC EDGAR / EDINET を取得し、Claude API（低トークン）で日英要約・数値差分を生成。数値は XBRL から照合。上記はUIサンプル。",
+   tech_note:"本番では公式RSS / ニュースAPI を集約し、Claude で日英要約。各記事に出典URLを併記。",
+   people_note:"実在人物は事実・出典明記に限定（憶測なし）。出典URLを小リンクで表示。",
+   papers_note:"本番では arXiv API（cs.AI / cs.LG / cs.CR）から取得し要約。",
+   sec_note:"出典: NVD(CVE) / CISA KEV / JPCERT/CC。注意喚起・対策の客観共有に限定。",
+   disc:"<b>免責:</b> 本ツールは客観的な情報収集を支援するもので、投資助言・売買推奨ではありません。表示データは遅延の場合があり、正確性を保証しません。チャート/ティッカー/カレンダー/ニュースは TradingView の無料ウィジェット、配信は各サービスの公式埋め込みを利用します。投資判断はご自身の責任で行ってください。"},
+ en:{tagline:"Markets & tech monitor — JP/EN",nav_sec:"Sections",nav_markets:"Markets",nav_filings:"Filings & earnings",
+   nav_hub:"Tech / AI / Security",nav_cal:"Economic calendar",nav_stream:"Live",nav_clock:"World market hours",
+   h_markets:"Watched markets",updated:"Updated",overview:"Global market overview",h_fx:"Forex (JPY-centric)",
+   fx_hint:"Click to load in the chart above",h_movers:"Top movers (selected market)",h_filings:"Filings & earnings — unified feed",
+   filings_t:"JP/US filings (with summaries)",h_hub:"Tech / AI / Security",tab_tech:"Tech & AI",tab_people:"People & scholars",
+   tab_papers:"Papers",tab_sec:"Security",h_cal:"Economic calendar",h_stream:"News & live",
+   news_t:"Top stories",stream_t:"Live (switch channels)",play:"Play",
+   m_mkt:"Markets",m_fil:"Filings",m_hub:"Tech",m_cal:"Calendar",m_str:"Live",
+   h_const:"Top 30 constituents",const_hint:"Click a name for details",ai_sum:"AI summary",detail:"Details",source:"Source",loading:"Generating summary…",no_ai:"(Sample when Claude is offline; run the server to enable summaries.)",
+   nav_secops:"Security desk",m_sec:"SecOps",h_secops:"Security intelligence desk",secops_hint:"Threats to Japan · updates · academia · dark-web trends",loading_feed:"Loading latest…",no_data:"No items (will retry with a wider window)",
+   secops_note:"Sources: GDELT (media) / NVD (CVE) / CISA KEV. Limited to objective defense/advisory/mitigation info (no attack how-to). 'Dark web' is a media-reported overview.",
+   filings_note:"In production: pull SEC EDGAR / EDINET and generate JP/EN summaries and numeric deltas with the Claude API (low-token). Figures reconciled from XBRL. Rows above are UI samples.",
+   tech_note:"In production: aggregate official RSS / news APIs and summarize JP/EN with Claude. Source URL shown per item.",
+   people_note:"Real people: facts with cited sources only (no speculation). Source URL shown as a small link.",
+   papers_note:"In production: pull from the arXiv API (cs.AI / cs.LG / cs.CR) and summarize.",
+   sec_note:"Sources: NVD (CVE) / CISA KEV / JPCERT/CC. Limited to objective advisories & mitigations.",
+   disc:"<b>Disclaimer:</b> This tool supports objective information gathering and is not investment advice or a recommendation. Data may be delayed and is not guaranteed accurate. Charts/tickers/calendar/news use TradingView free widgets; live video uses each service's official embed. Make decisions at your own risk."}
+};
+let LANG="ja", THEME="light";
+
+/* ---------- Markets data ---------- */
+const MARKETS=[
+ {id:"NI225", sym:"INDEX:NKY", nm_ja:"日経平均", nm_en:"Nikkei 225", px:"38,420", chg:"+1.12%", up:true, scr:"japan"},
+ {id:"TOPIX", sym:"TVC:TOPIX", nm_ja:"TOPIX", nm_en:"TOPIX", px:"2,712", chg:"+0.84%", up:true, scr:"japan"},
+ {id:"NDX", sym:"NASDAQ:IXIC", nm_ja:"NASDAQ総合", nm_en:"NASDAQ", px:"19,860", chg:"-0.32%", up:false, scr:"america"},
+ {id:"SPX", sym:"SP:SPX", nm_ja:"S&P 500", nm_en:"S&P 500", px:"5,544", chg:"+0.21%", up:true, scr:"america"},
+ {id:"SENSEX", sym:"BSE:SENSEX", nm_ja:"インド SENSEX", nm_en:"India SENSEX", px:"79,210", chg:"+0.46%", up:true, scr:"india"},
+ {id:"NIFTY", sym:"NSE:NIFTY", nm_ja:"インド NIFTY 50", nm_en:"India NIFTY", px:"24,010", chg:"+0.39%", up:true, scr:"india"}
+];
+const FX=[
+ {sym:"FX:USDJPY", nm:"USD/JPY"},{sym:"FX:EURJPY", nm:"EUR/JPY"},
+ {sym:"FX:GBPJPY", nm:"GBP/JPY"},{sym:"FX:AUDJPY", nm:"AUD/JPY"}
+];
+const TF=[
+ {k:"1D",ja:"1日",interval:"5",range:"1D"},{k:"1W",ja:"1週間",interval:"30",range:"5D"},
+ {k:"1M",ja:"1ヶ月",interval:"60",range:"1M"},{k:"3M",ja:"3ヶ月",interval:"D",range:"3M"},
+ {k:"6M",ja:"半年",interval:"D",range:"6M"},{k:"1Y",ja:"1年",interval:"D",range:"12M"},
+ {k:"3Y",ja:"3年",interval:"W",range:"36M"},{k:"5Y",ja:"5年",interval:"W",range:"60M"},
+ {k:"10Y",ja:"10年",interval:"M",range:"ALL"}
+];
+let curSym=MARKETS[0], curTF=TF[3];
+
+/* ---------- Glossary ---------- */
+const GLOSS={
+ "PER":{ja:["PER（株価収益率）","株価が1株あたり利益の何倍かを示す指標。高いほど割高とされやすい。"],en:["P/E ratio","Price divided by earnings per share. Higher can mean more expensive."]},
+ "PBR":{ja:["PBR（株価純資産倍率）","株価が1株あたり純資産の何倍かを示す指標。1倍割れは割安の目安とされることも。"],en:["P/B ratio","Price relative to book value per share. Below 1 is sometimes seen as cheap."]},
+ "ローソク足":{ja:["ローソク足","一定期間の始値・高値・安値・終値を1本の図形で表したチャート。"],en:["Candlestick","A bar showing open, high, low, close for a period."]},
+ "XBRL":{ja:["XBRL","決算データを機械が読める形で構造化した国際標準フォーマット。"],en:["XBRL","A global standard that structures financial filings so machines can read them."]},
+ "CVE":{ja:["CVE","公開された脆弱性に付与される世界共通の識別番号。"],en:["CVE","A global ID assigned to a publicly disclosed security vulnerability."]},
+ "業績修正":{ja:["業績修正","会社が過去に出した売上・利益の予想を見直して変更すること。"],en:["Guidance revision","When a company changes its previously issued sales/profit forecast."]},
+ "適時開示":{ja:["適時開示","上場企業が投資判断に重要な情報を速やかに公表する制度。"],en:["Timely disclosure","Rules requiring listed firms to promptly publish material information."]}
+};
+function gl(t){return `<span class="term" data-term="${t}">${t}</span>`;}
+
+/* ---------- Sample feeds (UI scaffold) ---------- */
+const FEED_FILING=[
+ {tag:"earn",tag_ja:"決算",tag_en:"Earnings",ja:["トヨタ自動車 (7203)：第1四半期 営業益 前年比+8%",`営業利益は会社${gl("業績修正")}前の市場予想をやや上回る着地。${gl("XBRL")}データで前年同期比を自動算出。`],en:["Toyota (7203): Q1 operating profit +8% YoY","Operating profit edged past consensus; YoY computed from XBRL."],time:"2026-06-28 09:30 JST",src:"EDINET",url:"https://disclosure2.edinet-fsa.go.jp/"},
+ {tag:"earn",tag_ja:"決算",tag_en:"Earnings",ja:["NVIDIA (NVDA): 8-K 提出 — 四半期売上が過去最高",`${gl("適時開示")}の原文へのリンクを併記。要約は ${gl("XBRL")} と本文から生成。`],en:["NVIDIA (NVDA): 8-K filed — record quarterly revenue","Links to the primary filing; summary derived from XBRL and text."],time:"2026-06-27 16:05 EDT",src:"SEC EDGAR",url:"https://www.sec.gov/edgar"},
+ {tag:"rev",tag_ja:"業績修正",tag_en:"Revision",ja:["三協立山 (5932)：通期 経常益を上方修正（+700%）",`${gl("業績修正")}：前回予想1億円→8億円。${gl("PER")}等の指標も再計算。`],en:["Sankyo Tateyama (5932): FY recurring profit raised (+700%)","Guidance revised ¥0.1bn → ¥0.8bn; ratios like P/E recomputed."],time:"2026-06-26 17:00 JST",src:"TDnet",url:"https://www.release.tdnet.info/"},
+ {tag:"earn",tag_ja:"決算",tag_en:"Earnings",ja:["ソニーG (6758)：自社株買いと中期計画を開示","取得枠と進捗を要約。原文(適時開示)へリンク。"],en:["Sony Group (6758): buyback and mid-term plan disclosed","Summary of size and progress; links to the filing."],time:"2026-06-24 15:00 JST",src:"TDnet",url:"https://www.release.tdnet.info/"},
+ {tag:"earn",tag_ja:"決算",tag_en:"Earnings",ja:["Apple (AAPL): 10-Q 提出 — サービス売上が最高","セグメント別の伸びを要約。XBRLで前年比算出。"],en:["Apple (AAPL): 10-Q filed — record services revenue","Segment growth summarized; YoY from XBRL."],time:"2026-05-02 16:30 EDT",src:"SEC EDGAR",url:"https://www.sec.gov/edgar"},
+ {tag:"rev",tag_ja:"業績修正",tag_en:"Revision",ja:["西松屋チェーン (7545)：1Q 経常54.7億円で着地","計画進捗を要約。前年同期比を併記。"],en:["Nishimatsuya (7545): Q1 recurring profit ¥5.47bn","Progress vs plan summarized; YoY shown."],time:"2026-06-26 16:15 JST",src:"EDINET",url:"https://disclosure2.edinet-fsa.go.jp/"}
+];
+const FEED_TECH=[
+ {tag:"ai",ja:["国産ヒューマノイドの新型、家庭内タスクで自律動作デモ","複数社が汎用動作モデルを公開。実運用に向けた安全評価が論点。"],en:["New domestic humanoid demos autonomous home tasks","Several firms release general motion models; safety evaluation in focus."],time:"2026-06-28 08:10 JST",src:"Official RSS",url:"#"},
+ {tag:"ai",ja:["大規模推論モデルの省電力化、推論コストが前年比で大幅低下","エッジ実装の現実味が増し、端末側AIの採用が拡大。"],en:["Efficient reasoning models cut inference cost sharply YoY","Edge deployment becomes practical; on-device AI adoption widens."],time:"2026-06-27 21:40 JST",src:"News API",url:"#"}
+];
+const FEED_PEOPLE=[
+ {tag:"ai",ja:["著名AI研究者、汎用エージェントの評価指標に関する講演","出典の一次ソース（大学/学会ページ）にリンク。事実ベースで記載。"],en:["Noted AI researcher lectures on agent evaluation metrics","Linked to primary source (university/conference). Facts only."],time:"2026-06-25",src:"University",url:"#"}
+];
+const FEED_PAPER=[
+ {tag:"paper",ja:["長文文脈における検索拡張生成の頑健性（cs.CL）","ベンチマークと手法を要約。原文(arXiv)へリンク。"],en:["Robustness of RAG over long contexts (cs.CL)","Summary of benchmark and method; links to arXiv."],time:"2026-06-26",src:"arXiv",url:"https://arxiv.org/"},
+ {tag:"paper",ja:["軽量モデルの蒸留に関する新手法（cs.LG）","パラメータ効率と精度のトレードオフを検証。"],en:["A distillation method for compact models (cs.LG)","Examines parameter-efficiency vs. accuracy trade-off."],time:"2026-06-24",src:"arXiv",url:"https://arxiv.org/"}
+];
+const FEED_SEC=[
+ {tag:"sec",ja:[`広く使われるライブラリに緊急の${gl("CVE")}、悪用が確認され対策推奨`,"影響範囲・暫定対策・恒久対策を整理。被害報告のある製品を明示。"],en:["Urgent CVE in a widely-used library; exploitation observed","Scope, workaround, and fix summarized; affected products noted."],time:"2026-06-28 07:00 UTC",src:"CISA KEV",url:"https://www.cisa.gov/known-exploited-vulnerabilities-catalog"},
+ {tag:"sec",ja:["国内向けランサムウェアの注意喚起、初期侵入の傾向を共有","JPCERT/CC が観測した傾向と推奨対策を客観的に要約。"],en:["Advisory on ransomware targeting JP orgs; initial-access trends","Objective summary of observed trends and recommended mitigations."],time:"2026-06-27 10:00 JST",src:"JPCERT/CC",url:"https://www.jpcert.or.jp/"},
+ {tag:"sec",ja:[`主要VPN製品に高深刻度の${gl("CVE")}、認証回避の恐れ`,"影響バージョンと暫定回避策を整理。ベンダー修正の適用を推奨。"],en:["High-severity CVE in major VPN product; auth bypass risk","Affected versions and workaround noted; apply vendor fix."],time:"2026-06-23",src:"NVD",url:"https://nvd.nist.gov/"},
+ {tag:"sec",ja:["広く使われるブラウザにゼロデイ、悪用観測で緊急更新","CISAが悪用中リストに追加。直ちに更新を推奨。"],en:["Zero-day in a popular browser; emergency update urged","Added to CISA exploited list; update immediately."],time:"2026-06-20",src:"CISA KEV",url:"https://www.cisa.gov/known-exploited-vulnerabilities-catalog"}
+];
+
+/* world clocks */
+const CLOCKS=[
+ {nm:"Tokyo",tz:9,o:9,c:15},{nm:"London",tz:1,o:8,c:16.5},
+ {nm:"New York",tz:-4,o:9.5,c:16},{nm:"Mumbai",tz:5.5,o:9.25,c:15.5},{nm:"Hong Kong",tz:8,o:9.5,c:16}
+];
+
+/* ---------- Index constituents (top ~30 by weight; representative) ---------- */
+const CONSTITUENTS={
+ japan:[["TSE:7203","トヨタ自動車"],["TSE:6758","ソニーG"],["TSE:8035","東京エレクトロン"],["TSE:9984","ソフトバンクG"],["TSE:6861","キーエンス"],["TSE:9983","ファーストリテイリング"],["TSE:6098","リクルートHD"],["TSE:8306","三菱UFJ"],["TSE:4063","信越化学"],["TSE:6594","ニデック"],["TSE:7974","任天堂"],["TSE:6902","デンソー"],["TSE:4502","武田薬品"],["TSE:8058","三菱商事"],["TSE:8001","伊藤忠商事"],["TSE:9433","KDDI"],["TSE:9432","NTT"],["TSE:6501","日立製作所"],["TSE:7267","ホンダ"],["TSE:6367","ダイキン"],["TSE:4519","中外製薬"],["TSE:8316","三井住友FG"],["TSE:8766","東京海上"],["TSE:6981","村田製作所"],["TSE:7741","HOYA"],["TSE:6273","SMC"],["TSE:4661","オリエンタルランド"],["TSE:9020","JR東日本"],["TSE:2914","JT"],["TSE:6954","ファナック"]],
+ america:[["NASDAQ:AAPL","Apple"],["NASDAQ:MSFT","Microsoft"],["NASDAQ:NVDA","NVIDIA"],["NASDAQ:AMZN","Amazon"],["NASDAQ:GOOGL","Alphabet"],["NASDAQ:META","Meta"],["NASDAQ:TSLA","Tesla"],["NASDAQ:AVGO","Broadcom"],["NASDAQ:COST","Costco"],["NASDAQ:NFLX","Netflix"],["NASDAQ:AMD","AMD"],["NASDAQ:PEP","PepsiCo"],["NASDAQ:ADBE","Adobe"],["NASDAQ:CSCO","Cisco"],["NASDAQ:TMUS","T-Mobile"],["NASDAQ:INTC","Intel"],["NASDAQ:QCOM","Qualcomm"],["NASDAQ:AMAT","Applied Materials"],["NASDAQ:TXN","Texas Instr."],["NASDAQ:INTU","Intuit"],["NASDAQ:AMGN","Amgen"],["NASDAQ:ISRG","Intuitive Surgical"],["NASDAQ:BKNG","Booking"],["NASDAQ:MU","Micron"],["NASDAQ:ADI","Analog Devices"],["NASDAQ:LRCX","Lam Research"],["NASDAQ:REGN","Regeneron"],["NASDAQ:VRTX","Vertex"],["NASDAQ:PANW","Palo Alto"],["NASDAQ:GILD","Gilead"]],
+ india:[["NSE:RELIANCE","Reliance"],["NSE:TCS","TCS"],["NSE:HDFCBANK","HDFC Bank"],["NSE:INFY","Infosys"],["NSE:ICICIBANK","ICICI Bank"],["NSE:HINDUNILVR","HUL"],["NSE:ITC","ITC"],["NSE:SBIN","SBI"],["NSE:BHARTIARTL","Bharti Airtel"],["NSE:BAJFINANCE","Bajaj Finance"],["NSE:KOTAKBANK","Kotak Bank"],["NSE:LT","Larsen & Toubro"],["NSE:HCLTECH","HCL Tech"],["NSE:ASIANPAINT","Asian Paints"],["NSE:AXISBANK","Axis Bank"],["NSE:MARUTI","Maruti Suzuki"],["NSE:SUNPHARMA","Sun Pharma"],["NSE:TITAN","Titan"],["NSE:ULTRACEMCO","UltraTech"],["NSE:WIPRO","Wipro"],["NSE:NESTLEIND","Nestle India"],["NSE:POWERGRID","Power Grid"],["NSE:NTPC","NTPC"],["NSE:TATAMOTORS","Tata Motors"],["NSE:TATASTEEL","Tata Steel"],["NSE:MM","Mahindra"],["NSE:BAJAJFINSV","Bajaj Finserv"],["NSE:TECHM","Tech Mahindra"],["NSE:INDUSINDBK","IndusInd"],["NSE:JSWSTEEL","JSW Steel"]]
+};
+
+/* ---------- TradingView widget loader ---------- */
+function tvWidget(target, script, cfg){
+  const el=document.getElementById(target); if(!el) return;
+  el.innerHTML="";
+  const c=document.createElement("div"); c.className="tradingview-widget-container"; c.style.height="100%";
+  const w=document.createElement("div"); w.className="tradingview-widget-container__widget"; w.style.height="100%";
+  c.appendChild(w);
+  const s=document.createElement("script"); s.type="text/javascript";
+  s.src="https://s3.tradingview.com/external-embedding/"+script; s.async=true;
+  s.innerHTML=JSON.stringify(cfg); c.appendChild(s); el.appendChild(c);
+}
+function tvTheme(){return THEME==="dark"?"dark":"light";}
+function tvLocale(){return LANG==="ja"?"ja":"en";}
+
+function buildChart(){
+  document.getElementById("chartTitle").textContent=(LANG==="ja"?curSym.nm_ja:curSym.nm_en)+" ("+curSym.id+")";
+  tvWidget("advChart","embed-widget-advanced-chart.js",{
+    symbol:curSym.sym, interval:curTF.interval, range:curTF.range, timezone:"Asia/Tokyo",
+    theme:tvTheme(), style:"1", locale:tvLocale(), allow_symbol_change:false,
+    hide_side_toolbar:false, autosize:true, calendar:false
+  });
+}
+function buildTicker(){
+  tvWidget("tickerTape","embed-widget-ticker-tape.js",{
+    symbols:MARKETS.map(m=>({proName:m.sym,title:LANG==="ja"?m.nm_ja:m.nm_en})).concat(FX.map(f=>({proName:f.sym,title:f.nm}))),
+    colorTheme:tvTheme(), locale:tvLocale(), isTransparent:true, displayMode:"adaptive"
+  });
+}
+function buildOverview(){
+  tvWidget("overview","embed-widget-market-overview.js",{
+    colorTheme:tvTheme(), locale:tvLocale(), isTransparent:true, showSymbolLogo:true, width:"100%", height:"100%",
+    tabs:[
+      {title:LANG==="ja"?"指数":"Indices", symbols:[{s:"INDEX:NKY"},{s:"TVC:TOPIX"},{s:"NASDAQ:IXIC"},{s:"SP:SPX"},{s:"BSE:SENSEX"},{s:"NSE:NIFTY"}]},
+      {title:LANG==="ja"?"為替":"Forex", symbols:[{s:"FX:USDJPY"},{s:"FX:EURJPY"},{s:"FX:GBPJPY"},{s:"FX:AUDJPY"}]},
+      {title:LANG==="ja"?"商品":"Commodities", symbols:[{s:"TVC:GOLD"},{s:"TVC:USOIL"},{s:"TVC:SILVER"}]}
+    ]
+  });
+}
+function buildHotlists(){
+  tvWidget("hotlists","embed-widget-hotlists.js",{
+    colorTheme:tvTheme(), locale:tvLocale(), isTransparent:true, width:"100%", height:"100%",
+    exchange:curSym.scr==="japan"?"japan":(curSym.scr==="india"?"india":"US")
+  });
+}
+function buildCal(){
+  tvWidget("econCal","embed-widget-events.js",{
+    colorTheme:tvTheme(), locale:tvLocale(), isTransparent:true, width:"100%", height:"100%",
+    importanceFilter:"0,1", countryFilter:"jp,us,in,eu,gb"
+  });
+}
+function buildNews(){
+  tvWidget("newsWid","embed-widget-timeline.js",{
+    colorTheme:tvTheme(), locale:tvLocale(), isTransparent:true, width:"100%", height:"100%",
+    feedMode:"market", market:"stock", displayMode:"regular"
+  });
+}
+function buildFX(){
+  const row=document.getElementById("fxRow"); row.innerHTML="";
+  FX.forEach(f=>{
+    const card=document.createElement("div"); card.className="card";
+    card.style.cursor="pointer";
+    const id="fx_"+f.sym.replace(/[^A-Za-z]/g,"");
+    card.innerHTML=`<div class="ch"><span class="t">${f.nm}</span></div><div class="bd"><div class="wid-sm" id="${id}"></div></div>`;
+    card.onclick=()=>{ curSym={id:f.nm,sym:f.sym,nm_ja:f.nm,nm_en:f.nm,scr:"US"}; buildChart();
+      document.getElementById("markets").scrollIntoView({behavior:"smooth"}); };
+    row.appendChild(card);
+    tvWidget(id,"embed-widget-mini-symbol-overview.js",{symbol:f.sym,width:"100%",height:"100%",
+      locale:tvLocale(),colorTheme:tvTheme(),isTransparent:true,dateRange:"1M"});
+  });
+}
+
+/* ---------- Constituents (top 30) ---------- */
+function renderConstituents(){
+  const el=document.getElementById("constChips"); if(!el) return; el.innerHTML="";
+  document.getElementById("constTitle").textContent=(LANG==="ja"?curSym.nm_ja:curSym.nm_en)+" — "+I18N[LANG].h_const;
+  const list=CONSTITUENTS[curSym.scr]||CONSTITUENTS.america;
+  list.forEach((c,i)=>{
+    const b=document.createElement("button"); b.className="chip";
+    b.innerHTML=`<span class="rk">#${i+1}</span><span class="cs">${c[0].split(":")[1]}</span><span class="cnm">${c[1]}</span>`;
+    b.onclick=()=>openCompany(c[0],c[1]);
+    el.appendChild(b);
+  });
+}
+
+/* ---------- Modal ---------- */
+const modal=document.getElementById("modal");
+function openModal(){modal.classList.add("on");document.body.style.overflow="hidden";}
+function closeModal(){modal.classList.remove("on");document.body.style.overflow="";document.getElementById("mBody").innerHTML="";}
+document.getElementById("mClose").onclick=closeModal;
+modal.onclick=e=>{if(e.target===modal)closeModal();};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&modal.classList.contains("on"))closeModal();});
+
+function openCompany(sym,name){
+  document.getElementById("mTitle").textContent=name+"  ("+sym.split(":")[1]+")";
+  document.getElementById("mMeta").innerHTML=`<span>${sym}</span>
+    <a href="https://www.tradingview.com/symbols/${sym.replace(':','-')}/" target="_blank" rel="noopener">TradingView ↗</a>`;
+  const b=document.getElementById("mBody");
+  b.innerHTML=`<div class="mtf" id="m_tfbar"></div>
+    <div class="mgrid">
+    <div class="w full" id="m_chart"></div>
+    <div class="w" id="m_info"></div>
+    <div class="w" id="m_fund"></div>
+    <div class="w full" id="m_tech"></div></div>`;
+  openModal();
+  let mtf=TF[5]; // default 1Y
+  const drawMChart=()=>tvWidget("m_chart","embed-widget-advanced-chart.js",{symbol:sym,interval:mtf.interval,range:mtf.range,theme:tvTheme(),style:"1",locale:tvLocale(),autosize:true,hide_side_toolbar:true,allow_symbol_change:false});
+  const tb=document.getElementById("m_tfbar");
+  TF.forEach(t=>{const bt=document.createElement("button"); bt.className=(t.k===mtf.k?"on":"");
+    bt.textContent=LANG==="ja"?t.ja:t.k;
+    bt.onclick=()=>{mtf=t; tb.querySelectorAll("button").forEach(x=>x.classList.remove("on")); bt.classList.add("on"); drawMChart();};
+    tb.appendChild(bt);});
+  drawMChart();
+  tvWidget("m_info","embed-widget-symbol-info.js",{symbol:sym,width:"100%",locale:tvLocale(),colorTheme:tvTheme(),isTransparent:true});
+  tvWidget("m_fund","embed-widget-financials.js",{symbol:sym,displayMode:"compact",width:"100%",height:"100%",locale:tvLocale(),colorTheme:tvTheme(),isTransparent:true});
+  tvWidget("m_tech","embed-widget-technical-analysis.js",{symbol:sym,width:"100%",height:"100%",interval:"1D",locale:tvLocale(),colorTheme:tvTheme(),isTransparent:true,showIntervalTabs:true});
+}
+
+async function openDetail(r){
+  const [t,s]=rowParts(r);
+  document.getElementById("mTitle").textContent=t;
+  document.getElementById("mMeta").innerHTML=`<span>⏱ ${r.time||"—"}</span>
+    <a href="${r.url||"#"}" target="_blank" rel="noopener">${r.src||I18N[LANG].source} ↗</a>`;
+  const b=document.getElementById("mBody");
+  b.innerHTML=`<div class="aibox"><div class="lab">${I18N[LANG].ai_sum}</div>
+      <div class="txt" id="mAi">${I18N[LANG].loading}</div></div>
+    ${s?`<p>${s}</p>`:""}
+    <p style="font-size:12px;color:var(--faint)">${I18N[LANG].source}: <a href="${r.url||'#'}" target="_blank" rel="noopener" style="color:var(--accent)">${r.url||'—'}</a></p>`;
+  openModal();
+  // on-demand AI summary (token-saving: only when opened)
+  const base=(s||t).slice(0,1500);
+  try{
+    const resp=await fetch(API_BASE+"/api/summarize",{method:"POST",headers:{"content-type":"application/json"},
+      body:JSON.stringify({text:base,lang:LANG})});
+    const j=await resp.json();
+    document.getElementById("mAi").textContent=j.summary || (s||I18N[LANG].no_ai);
+  }catch(e){ document.getElementById("mAi").textContent=s||I18N[LANG].no_ai; }
+}
+function L(o){return LANG==="ja"?o.ja:o.en;}
+function rowParts(r){ // supports sample {ja,en} and live {title,summary}
+  if(r.ja||r.en){const a=L(r);return [a[0],a[1]];}
+  return [r.title||"", r.summary||""];
+}
+function tagLabel(t){const m={earn:{ja:"決算",en:"Earnings"},rev:{ja:"業績修正",en:"Revision"},sec:{ja:"対策",en:"Advisory"},ai:{ja:"AI",en:"AI"},paper:{ja:"論文",en:"Paper"}};return (m[t]||{ja:t,en:t})[LANG];}
+function renderFeed(target,arr){
+  const el=document.getElementById(target); if(!el) return; el.innerHTML="";
+  arr.forEach(r=>{
+    const [t,s]=rowParts(r);
+    const div=document.createElement("div"); div.className="row";
+    div.innerHTML=`<span class="tag ${r.tag||"ai"}">${tagLabel(r.tag||"ai")}</span>
+      <div class="body"><div class="ttl">${t}</div>${s?`<div class="sum">${s}</div>`:""}
+      ${r.tip?`<div class="onepoint"><b>${LANG==="ja"?"対策":"Fix"}</b> ${r.tip}</div>`:""}
+      <div class="meta">${(r.ja||r.en)?`<span class="aibadge">AI ${LANG==="ja"?"要約":"summary"}</span>`:""}
+      <span class="time">⏱ ${r.time||"—"}</span>
+      <a class="lnk" href="${r.url||"#"}" target="_blank" rel="noopener">${r.src||""} ↗</a></div></div>`;
+    div.onclick=(e)=>{ if(e.target.closest("a")||e.target.closest(".term"))return; openDetail(r); };
+    el.appendChild(div);
+  });
+  bindTerms();
+}
+function renderMarkets(){
+  const bar=document.getElementById("marketsBar"); bar.innerHTML="";
+  MARKETS.forEach(m=>{
+    const b=document.createElement("button"); b.className="mkt"+(m.id===curSym.id?" on":"");
+    b.innerHTML=`<div class="nm">${LANG==="ja"?m.nm_ja:m.nm_en}</div><div class="px mono">${m.px}</div>
+      <div class="ch2 ${m.up?"up":"down"} mono">${m.chg}</div>`;
+    b.onclick=()=>{ curSym=m; renderMarkets(); buildChart(); buildHotlists(); renderConstituents(); };
+    bar.appendChild(b);
+  });
+  document.getElementById("updMarkets").textContent=new Date().toLocaleTimeString(LANG==="ja"?"ja-JP":"en-US");
+}
+function renderTF(){
+  const bar=document.getElementById("tfbar"); bar.innerHTML="";
+  TF.forEach(t=>{
+    const b=document.createElement("button"); b.className="tf"+(t.k===curTF.k?" on":"");
+    b.textContent=LANG==="ja"?t.ja:t.k;
+    b.onclick=()=>{ curTF=t; renderTF(); buildChart(); };
+    bar.appendChild(b);
+  });
+}
+function renderClocks(){
+  const el=document.getElementById("clocks"); if(!el) return; el.innerHTML="";
+  const now=new Date(); const utc=now.getUTCHours()+now.getUTCMinutes()/60;
+  CLOCKS.forEach(c=>{
+    let lt=(utc+c.tz+24)%24; const open=lt>=c.o&&lt<c.c;
+    const hh=Math.floor(lt), mm=Math.floor((lt-hh)*60);
+    const d=document.createElement("div"); d.className="clock";
+    d.innerHTML=`<div><div class="nm">${c.nm}</div><div class="tm mono">${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}</div></div>
+      <span class="st ${open?"open":"closed"}">${open?(LANG==="ja"?"取引中":"OPEN"):(LANG==="ja"?"休場":"CLOSED")}</span>`;
+    el.appendChild(d);
+  });
+}
+
+/* ---------- Glossary tooltip ---------- */
+const tip=document.getElementById("tip");
+function bindTerms(){
+  document.querySelectorAll(".term").forEach(t=>{
+    t.onmouseenter=e=>showTip(e,t.dataset.term);
+    t.onmousemove=e=>posTip(e);
+    t.onmouseleave=hideTip;
+    t.onclick=e=>{showTip(e,t.dataset.term);posTip(e);setTimeout(hideTip,2600);};
+  });
+}
+function showTip(e,key){
+  const g=GLOSS[key]; if(!g) return; const d=g[LANG]||g.ja;
+  tip.innerHTML=`<span class="tw">${d[0]}</span>${d[1]}`;
+  tip.style.display="block"; requestAnimationFrame(()=>{tip.style.opacity="1";tip.style.transform="translateY(0)";});
+  posTip(e);
+}
+function posTip(e){let x=e.clientX+14,y=e.clientY+16;
+  if(x+290>window.innerWidth)x=window.innerWidth-290; if(y+120>window.innerHeight)y=e.clientY-120;
+  tip.style.left=x+"px"; tip.style.top=y+"px";}
+function hideTip(){tip.style.opacity="0";setTimeout(()=>tip.style.display="none",140);}
+
+/* ---------- Stream ---------- */
+const CHANNELS=[
+ {cn:"Markets News",cc:"検索: market news live",q:"market news live"},
+ {cn:"Tech News",cc:"検索: tech news",q:"technology news live"},
+ {cn:"World / Economy",cc:"検索: world economy news",q:"world economy news live"},
+ {cn:"AI Updates",cc:"検索: AI news",q:"artificial intelligence news"}
+];
+function renderChannels(){
+  const el=document.getElementById("chList");
+  el.querySelectorAll(".ch-item").forEach(n=>n.remove());
+  const add=el.querySelector(".chadd");
+  CHANNELS.forEach((c,i)=>{
+    const b=document.createElement("button"); b.className="ch-item"+(i===0?" on":"");
+    b.innerHTML=`<span class="cn">${c.cn}</span><span class="cc">${c.cc}</span>`;
+    b.onclick=()=>{ el.querySelectorAll(".ch-item").forEach(x=>x.classList.remove("on")); b.classList.add("on");
+      document.getElementById("yt").src="https://www.youtube-nocookie.com/embed/?listType=search&list="+encodeURIComponent(c.q); };
+    el.insertBefore(b,add);
+  });
+}
+document.getElementById("ytGo").onclick=()=>{
+  let v=document.getElementById("ytInput").value.trim(); if(!v)return;
+  const m=v.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{6,})/); const id=m?m[1]:v;
+  document.getElementById("yt").src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id);
+};
+
+/* ---------- Hub tabs ---------- */
+document.getElementById("hubTabs").addEventListener("click",e=>{
+  const b=e.target.closest(".tab"); if(!b)return;
+  document.querySelectorAll("#hubTabs .tab").forEach(x=>x.classList.remove("on")); b.classList.add("on");
+  document.querySelectorAll("[data-panel]").forEach(p=>p.classList.toggle("on",p.dataset.panel===b.dataset.tab));
+});
+
+/* ---------- Lang & theme ---------- */
+function applyI18n(){
+  document.documentElement.lang=LANG;
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const v=I18N[LANG][el.dataset.i18n]; if(v==null)return;
+    if(el.dataset.i18n==="disc"){el.innerHTML=v;} else {el.textContent=v;}
+  });
+}
+function setLang(l){ LANG=l;
+  document.querySelectorAll("#langSeg button").forEach(b=>b.classList.toggle("on",b.dataset.lang===l));
+  applyI18n(); renderMarkets(); renderTF(); renderClocks(); renderConstituents(); renderTechCats();
+  renderFeed("peopleFeed",FEED_PEOPLE);
+  renderFeed("filingFeed",(STORE.filings&&STORE.filings.length)?STORE.filings:FEED_FILING);
+  renderFeed("paperFeed",(STORE.papers&&STORE.papers.length)?STORE.papers:FEED_PAPER);
+  renderFeed("secFeed",flatSec().length?flatSec():FEED_SEC);
+  renderSecOps();
+  buildTicker(); buildChart(); buildOverview(); buildHotlists(); buildCal(); buildNews(); buildFX();
+  try{localStorage.setItem("sent_lang",l);}catch(e){}
+}
+function setTheme(t){ THEME=t; document.documentElement.dataset.theme=t;
+  document.querySelectorAll("#themePick .swatch").forEach(b=>b.classList.toggle("on",b.dataset.theme===t));
+  buildTicker(); buildChart(); buildOverview(); buildHotlists(); buildCal(); buildNews(); buildFX();
+  try{localStorage.setItem("sent_theme",t);}catch(e){}
+}
+document.getElementById("langSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(b){setLang(b.dataset.lang);}});
+document.getElementById("themePick").addEventListener("click",e=>{const b=e.target.closest(".swatch");if(b)setTheme(b.dataset.theme);});
+
+/* nav scroll */
+function bindNav(sel){document.querySelectorAll(sel).forEach(a=>a.onclick=()=>{
+  const t=document.getElementById(a.dataset.scroll); if(t)t.scrollIntoView({behavior:"smooth"});
+  document.querySelectorAll(sel).forEach(x=>x.classList.remove("on")); a.classList.add("on");
+});}
+bindNav(".rail .navlink"); bindNav(".mobnav button");
+
+/* ============================================================
+   CONFIG — Set API_BASE to your Cloudflare Worker / Node server URL
+   to enable Claude summaries (+ arXiv/EDINET). Leave "" to run FULLY
+   client-side on GitHub Pages: TradingView widgets + GDELT news +
+   NVD/CISA security — all free, keyless, realtime, zero backend.
+   ============================================================ */
+const CONFIG = {
+  API_BASE: "",       // e.g. "https://sentinel.yourname.workers.dev"
+  USE_GDELT: true,    // free keyless realtime news (client-side)
+  USE_NVD_CISA: true  // free security data (client-side)
+};
+const API_BASE = CONFIG.API_BASE;
+/* STORE = all pre-collected content, grouped. Rendered instantly from cache. */
+let STORE={ts:0,news:{},sec:{},filings:[],papers:[]};
+const CACHE_TTL=12*3600*1000;   // refresh at most ~2x/day
+function flatSec(){ return Object.values(STORE.sec||{}).flat(); }
+
+async function pull(ep){ if(!API_BASE) return null;
+  try{const r=await fetch(API_BASE+ep,{cache:"no-store"});
+  if(!r.ok)return null; const j=await r.json(); return (Array.isArray(j)&&j.length)?j:null;}catch(e){return null;} }
+
+/* ---------- GDELT: free keyless realtime world news (client-side) ---------- */
+function fmtGdelt(s){ const m=String(s||"").match(/(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})/);
+  return m?`${m[1]}-${m[2]}-${m[3]} ${m[4]}:${m[5]}`:(s||""); }
+async function gdelt(query,tag="ai",max=18){
+  if(!CONFIG.USE_GDELT) return null;
+  const lang=LANG==="ja"?" sourcelang:japanese":" sourcelang:english";
+  const url="https://api.gdeltproject.org/api/v2/doc/doc?query="+encodeURIComponent(query+lang)+
+    "&mode=artlist&maxrecords="+max+"&sort=datedesc&format=json&timespan=3m";
+  try{const r=await fetch(url); if(!r.ok)return null; const j=await r.json();
+    const a=(j&&j.articles)||[]; if(!a.length)return null;
+    return a.map(x=>({tag,src:x.domain||"news",title:x.title||"",summary:"",time:fmtGdelt(x.seendate),url:x.url}));
+  }catch(e){return null;}
+}
+/* ---------- NVD + CISA: free security data (client-side) ---------- */
+async function nvdCves(n=15){ if(!CONFIG.USE_NVD_CISA)return null;
+  try{const start=new Date(Date.now()-90*864e5).toISOString().slice(0,23),end=new Date().toISOString().slice(0,23);
+    const r=await fetch(`https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=${n}&pubStartDate=${start}&pubEndDate=${end}`);
+    if(!r.ok)return null; const j=await r.json();
+    return (j.vulnerabilities||[]).map(v=>{const c=v.cve||{};const d=((c.descriptions||[]).find(x=>x.lang==="en")||{}).value||"";
+      return {tag:"sec",src:"NVD",title:c.id||"CVE",summary:d.slice(0,300),time:(c.published||"").slice(0,10),url:"https://nvd.nist.gov/vuln/detail/"+(c.id||"")};});
+  }catch(e){return null;}
+}
+async function cisaKev(n=15){ if(!CONFIG.USE_NVD_CISA)return null;
+  try{const r=await fetch("https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json");
+    if(!r.ok)return null; const j=await r.json();
+    return (j.vulnerabilities||[]).slice(-n).reverse().map(v=>({tag:"sec",src:"CISA KEV",
+      title:v.cveID+" — "+(v.vulnerabilityName||""),summary:(v.shortDescription||"")+(v.requiredAction?" ／ 対応: "+v.requiredAction:""),
+      time:v.dateAdded||"",url:"https://www.cisa.gov/known-exploited-vulnerabilities-catalog"}));
+  }catch(e){return null;}
+}
+
+/* ---------- Tech categories (②) ---------- */
+const TECH_CATS=[
+ {id:"ai",ja:"AI・ロボット",en:"AI & Robotics",q:'("artificial intelligence" OR "generative AI" OR LLM OR ロボット OR ヒューマノイド OR AI半導体)'},
+ {id:"space",ja:"宇宙・ロケット",en:"Space",q:'(宇宙 OR ロケット OR 衛星 OR "space launch" OR rocket OR satellite OR SpaceX OR JAXA)'},
+ {id:"auto",ja:"自動車・EV",en:"Auto / EV",q:'(自動車 OR EV OR "electric vehicle" OR 自動運転 OR "self-driving")'},
+ {id:"semi",ja:"半導体",en:"Semiconductors",q:'(半導体 OR semiconductor OR チップ OR TSMC OR "chip export")'},
+ {id:"energy",ja:"エネルギー",en:"Energy",q:'(エネルギー OR 原油 OR "crude oil" OR 電力 OR 原子力 OR LNG OR 再生可能エネルギー)'},
+ {id:"geo",ja:"地政学・戦争",en:"Geopolitics",q:'(戦争 OR 紛争 OR 制裁 OR war OR conflict OR sanctions OR military)'},
+ {id:"econ",ja:"経済・市場",en:"Economy",q:'(利上げ OR インフレ OR "central bank" OR inflation OR 景気後退 OR 株式市場)'},
+ {id:"academ",ja:"学術・研究",en:"Academia",q:'(研究 OR 論文 OR 大学 OR "research breakthrough" OR university OR ノーベル賞)'}
+];
+let techCat=0;
+function renderTechCats(){
+  const host=document.getElementById("techCats"); if(!host)return; host.innerHTML="";
+  TECH_CATS.forEach((c,i)=>{const b=document.createElement("button");
+    b.className="subchip"+(i===techCat?" on":""); b.textContent=LANG==="ja"?c.ja:c.en;
+    b.onclick=()=>{techCat=i; renderTechCats(); showTechCat();};
+    host.appendChild(b);});
+  showTechCat();
+}
+/* category switch is INSTANT — reads pre-collected STORE; only fetches live if that category is missing */
+function showTechCat(){
+  const c=TECH_CATS[techCat]; const d=STORE.news&&STORE.news[c.id];
+  if(d&&d.length){ renderFeed("techFeed",d); return; }
+  const el=document.getElementById("techFeed"); if(el)el.innerHTML=`<div class="loadingrow">${I18N[LANG].loading_feed}</div>`;
+  gdelt(c.q,"ai",14).then(n=>{ n=(n&&n.length)?n:FEED_TECH; STORE.news[c.id]=n; if(TECH_CATS[techCat].id===c.id)renderFeed("techFeed",n); });
+}
+
+/* ---------- SecOps panels (④) ---------- */
+const SEC_PANELS=[
+ {id:"infect",ja:"ウイルス感染・マルウェア動向",en:"Malware / Infections",color:"var(--down)",type:"gdelt",
+   q:'(ランサムウェア OR マルウェア OR ウイルス感染 OR ransomware OR malware OR サイバー攻撃)'},
+ {id:"kev",ja:"悪用中の脆弱性 (CISA KEV)",en:"Exploited vulns (KEV)",color:"var(--warn)",type:"kev"},
+ {id:"cve",ja:"新規CVE (NVD)",en:"New CVEs (NVD)",color:"var(--accent)",type:"nvd"},
+ {id:"patch",ja:"更新・パッチ情報",en:"Updates / Patches",color:"var(--up)",type:"gdelt",
+   q:'("security update" OR "patch released" OR 緊急アップデート OR 脆弱性 修正 OR 更新プログラム)'},
+ {id:"jp",ja:"日本を取り巻く脅威",en:"Japan threat landscape",color:"var(--violet)",type:"gdelt",
+   q:'(日本 (サイバー攻撃 OR 情報漏洩 OR 不正アクセス OR ランサムウェア) OR JPCERT OR IPA 注意喚起)'},
+ {id:"dark",ja:"ダークウェブ・情報漏洩（報道）",en:"Dark web / leaks (reported)",color:"#8A94A6",type:"gdelt",
+   q:'("dark web" OR データ漏洩 OR 情報流出 OR "data breach" OR leaked credentials OR ダークウェブ)'},
+ {id:"acad",ja:"学術・研究 (arXiv cs.CR)",en:"Academic (arXiv cs.CR)",color:"var(--up)",type:"arxiv"},
+ {id:"media",ja:"技術・メディア",en:"Tech media",color:"var(--accent)",type:"gdelt",
+   q:'(サイバーセキュリティ OR "zero trust" OR 暗号 OR AI security OR "security tool" OR セキュリティ対策)'}
+];
+/* ---------- 対策ワンポイント（感染/漏洩があれば対策も即表示・無料の辞書マッピング） ---------- */
+const TIPS=[
+ [/ransom|ランサム/i,{ja:"オフライン保管のバックアップ＋多要素認証(MFA)＋EDRで早期検知。復旧手順を事前演習。",en:"Offline backups + MFA + EDR; rehearse recovery."}],
+ [/phish|フィッシング|詐欺メール/i,{ja:"送信ドメイン認証(DMARC)＋MFA＋添付/リンクの隔離。利用者教育を定期実施。",en:"DMARC + MFA; sandbox links/attachments; train staff."}],
+ [/breach|漏洩|流出|leak/i,{ja:"該当アカウントのパスワード変更と失効、漏洩監視、最小権限・ログ監査を実施。",en:"Rotate affected creds, monitor leaks, least-privilege + audit logs."}],
+ [/zero[- ]?day|ゼロデイ/i,{ja:"ベンダー回避策の即時適用、該当機能の無効化、侵害痕跡(IOC)の調査。",en:"Apply vendor workaround, disable affected feature, hunt IOCs."}],
+ [/vpn|rce|remote code|認証回避|auth bypass/i,{ja:"対象機器を即パッチ、管理画面の公開停止、MFAと接続元制限を徹底。",en:"Patch device now; take admin UI off the internet; enforce MFA + IP allowlist."}],
+ [/ddos/i,{ja:"CDN/WAFでの緩和、レート制限、上流プロバイダと連携した遮断。",en:"Mitigate via CDN/WAF, rate-limit, coordinate upstream filtering."}],
+ [/malware|ウイルス|マルウェア|trojan/i,{ja:"EDRでの隔離・駆除、感染端末のネットワーク分離、全社スキャンと資格情報の再発行。",en:"Isolate & remove via EDR, segment infected hosts, org-wide scan + credential reset."}],
+ [/supply chain|サプライチェーン|依存|dependency/i,{ja:"SBOMで依存を棚卸し、署名検証、固定バージョン運用と更新監視。",en:"Inventory deps via SBOM, verify signatures, pin versions + watch updates."}]
+];
+function tipFor(text){ const s=String(text||""); for(const [re,t] of TIPS) if(re.test(s)) return (t[LANG]||t.ja);
+  return LANG==="ja"?"最新更新の適用・最小権限・ログ監視を徹底。":"Patch promptly, least-privilege, monitor logs."; }
+function withTips(arr){ return (arr||[]).map(x=>({...x, tip:x.tip||tipFor((x.title||"")+" "+(x.summary||""))})); }
+
+/* ---------- SecOps: render instantly from pre-collected STORE ---------- */
+function renderSecOps(){
+  const grid=document.getElementById("secGrid"); if(!grid)return; grid.innerHTML="";
+  SEC_PANELS.forEach(p=>{
+    const data=(STORE.sec&&STORE.sec[p.id])||[];
+    const d=document.createElement("div"); d.className="secpanel";
+    d.innerHTML=`<div class="sc"><span class="ico" style="background:${p.color}"></span>
+      <span class="st">${LANG==="ja"?p.ja:p.en}</span><span class="cnt">${data.length||0}</span></div>
+      <div class="sf" id="sec_${p.id}"></div>`;
+    grid.appendChild(d);
+    const host=document.getElementById("sec_"+p.id);
+    if(data.length) renderFeed("sec_"+p.id,data);
+    else host.innerHTML=`<div class="loadingrow">${I18N[LANG].no_data}</div>`;
+  });
+}
+
+/* ---------- cache (localStorage, 12h) → instant display ---------- */
+function saveCache(){ try{localStorage.setItem("sent_cache",JSON.stringify(STORE));}catch(e){} }
+function loadCache(){ try{const j=JSON.parse(localStorage.getItem("sent_cache")||"null");
+  if(j&&j.ts&&(Date.now()-j.ts<CACHE_TTL)) return j;}catch(e){} return null; }
+
+/* ---------- pre-built data (committed by the 2x/day collector workflow) ---------- */
+async function fetchPrebuilt(){
+  try{const r=await fetch("./data/collected.json",{cache:"no-store"}); if(!r.ok)return null;
+    const j=await r.json(); if(!j||!j.ts)return null; return j;}catch(e){return null;}
+}
+/* ---------- live fallback (only if no prebuilt & no fresh cache) ---------- */
+async function buildLive(){
+  const news={}, sec={};
+  for(const c of TECH_CATS){ const d=await gdelt(c.q,"ai",14); if(d&&d.length)news[c.id]=d; }
+  for(const p of SEC_PANELS){
+    let d=null;
+    if(p.type==="gdelt") d=await gdelt(p.q,"sec",12);
+    else if(p.type==="kev") d=await cisaKev(12)||await pull("/api/security");
+    else if(p.type==="nvd") d=await nvdCves(12);
+    else if(p.type==="arxiv") d=await pull("/api/papers")||await gdelt('(cybersecurity OR cryptography)',"paper",10);
+    if(d&&d.length) sec[p.id]=withTips(d);
+  }
+  const filings=await pull("/api/filings")||await gdelt(LANG==="ja"?'(決算 OR 業績修正 OR 自社株買い OR 上方修正)':'(earnings OR guidance OR buyback)',"earn",16)||[];
+  const papers=await pull("/api/papers")||sec.acad||[];
+  return {ts:Date.now(),news,sec,filings,papers};
+}
+function renderAll(){
+  renderTechCats();
+  renderFeed("filingFeed",(STORE.filings&&STORE.filings.length)?STORE.filings:FEED_FILING);
+  renderFeed("paperFeed",(STORE.papers&&STORE.papers.length)?STORE.papers:FEED_PAPER);
+  renderFeed("secFeed",flatSec().length?flatSec():FEED_SEC);
+  renderSecOps();
+}
+/* loadData: cache(12h) → prebuilt JSON → live → samples. Numbers (TradingView) stay realtime. */
+let LOADING=false;
+async function loadData(force){
+  if(LOADING) return;
+  if(!force){ const c=loadCache(); if(c){ STORE=c; Object.values(STORE.sec||{}).forEach(a=>a.forEach(x=>{if(!x.tip)x.tip=tipFor((x.title||"")+" "+(x.summary||""))})); renderAll(); return; } }
+  LOADING=true;
+  try{
+    let data=await fetchPrebuilt();
+    if(!data) data=await buildLive();
+    if(data){ if(data.sec) Object.keys(data.sec).forEach(k=>data.sec[k]=withTips(data.sec[k]));
+      STORE=data; saveCache(); renderAll(); }
+  } finally { LOADING=false; }
+}
+
+/* ---------- init ---------- */
+(function init(){
+  try{const l=localStorage.getItem("sent_lang"); if(l)LANG=l;}catch(e){}
+  try{const t=localStorage.getItem("sent_theme"); if(t)THEME=t;}catch(e){}
+  document.documentElement.dataset.theme=THEME;
+  document.querySelectorAll("#themePick .swatch").forEach(b=>b.classList.toggle("on",b.dataset.theme===THEME));
+  document.querySelectorAll("#langSeg button").forEach(b=>b.classList.toggle("on",b.dataset.lang===LANG));
+  renderTF(); renderChannels();
+  setLang(LANG);
+  renderClocks(); setInterval(renderClocks,30000);
+  // info/news/security: pre-collected & cached → instant; refresh at most ~2x/day
+  loadData(false); setInterval(()=>loadData(false), 6*3600*1000);
+})();
+</script>
+</body>
+</html>
