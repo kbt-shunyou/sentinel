@@ -1,0 +1,29 @@
+name: collect-data
+# 1日2回（UTC 00:00 と 12:00 ＝ 日本時間 09:00 と 21:00）世界の情報を事前収集して data/collected.json に保存。
+# サイトはこのJSONを読むだけなので、表示は一瞬・待ち時間なし。
+
+on:
+  schedule:
+    - cron: "0 0,12 * * *"
+  workflow_dispatch: {}   # 手動実行も可
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Collect worldwide info (news / security / filings / papers)
+        run: node scripts/collect.js
+      - name: Commit data
+        run: |
+          git config user.name "sentinel-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/collected.json
+          git commit -m "chore: refresh collected data" || echo "no changes"
+          git push
